@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 public class MainPlayerScreen extends JFrame {
 	//Fields which are used within this class and package.
 	MainPlayerScreen mainplayer = this;
-	private JPanel topPane, bottomPane;
+	private JPanel topPane, bottomPane, rightPane, leftPane;
 	private EmbeddedMediaPlayerComponent mediaPlayerComponent;
 	Skip ffswing, rwswing;
 	public static String mediapath;
@@ -55,11 +55,13 @@ public class MainPlayerScreen extends JFrame {
 
 	//Set up the GridBag Layout for my screen.
 	GridBagLayout gbl_topPane;
+	GridBagLayout gbl_leftPane;
 	GridBagLayout gbl_bottomPane;
+	GridBagLayout gbl_rightPane;
 	GridBagConstraints c;
 
 	//Buttons, sliders and labels which are used in my GUI for users to click.
-	JButton fastforward, rewind, mute, play;
+	JButton fastforward, rewind, mute, play, createCommentary1;
 	JSlider volume;
 	public JSlider positionSlider;
 	JLabel volumeLabel,timeLabel,endLabel;
@@ -78,8 +80,8 @@ public class MainPlayerScreen extends JFrame {
 	public static void main(String[] args) {
 		//Initialising all the screens which will be used in the video player.
 		MainPlayerScreen frame = new MainPlayerScreen();
-		frame.setBounds(300, 200, 820, 650);
-		frame.setMinimumSize(new Dimension(820, 1));
+		frame.setBounds(300, 200, 820, 590);
+		frame.setMinimumSize(new Dimension(820, 590));
 		frame.setVisible(true);
 		createCommentaryScreen = new TextToMp3Screen(frame);
 		createCommentaryScreen.setBounds(385, 475, 650, 100);
@@ -262,6 +264,33 @@ public class MainPlayerScreen extends JFrame {
 		 c.anchor = GridBagConstraints.SOUTH;
 		 c.fill = GridBagConstraints.HORIZONTAL;
 		 topPane.add(bottomPane, c);
+		 
+		 //creating the content pane which will store all of the control components
+		 gbl_rightPane = new GridBagLayout();
+		 rightPane = new JPanel(gbl_rightPane);
+		 c = new GridBagConstraints();
+		 c.gridx = 3;
+		 c.gridy = 0;
+		 c.weightx = 1;
+		 c.weighty = 1;
+		 c.gridheight = 2;
+		 c.gridwidth = 3;
+		 c.anchor = GridBagConstraints.EAST;
+		 c.fill = GridBagConstraints.BOTH;
+		 topPane.add(rightPane, c);
+		
+		 //creating the content pane which will store all of the control components
+		 gbl_leftPane = new GridBagLayout();
+		 leftPane = new JPanel(gbl_leftPane);
+		 c = new GridBagConstraints();
+		 c.gridx = 0;
+		 c.gridy = 0;
+		 c.weightx = 1;
+		 c.weighty = 1;
+		 c.gridwidth = 3;
+		 c.anchor = GridBagConstraints.WEST;
+		 c.fill = GridBagConstraints.BOTH;
+		 topPane.add(leftPane, c);
 
 		 //Adding a Jlabel which will be the starting time of the video
 		 timeLabel = new JLabel("00:00:00");
@@ -272,7 +301,7 @@ public class MainPlayerScreen extends JFrame {
 		 c.weighty = 0;
 		 c.anchor = GridBagConstraints.WEST;
 		 c.insets = new Insets(0,10,10,10);
-		 c.fill = GridBagConstraints.HORIZONTAL;
+		// c.fill = GridBagConstraints.HORIZONTAL;
 		 topPane.add(timeLabel, c);
 
 		 //Adding a Jlabel which will be the ending time of the video
@@ -284,8 +313,20 @@ public class MainPlayerScreen extends JFrame {
 		 c.weighty = 0;
 		 c.anchor = GridBagConstraints.EAST;
 		 c.insets = new Insets(0,10,10,10);
-		 c.fill = GridBagConstraints.HORIZONTAL;
+		// c.fill = GridBagConstraints.HORIZONTAL;
 		 topPane.add(endLabel, c);
+		 
+		 //JButton which Creates Commentary
+		 createCommentary1 = new JButton("Create Commentary");
+		 c = new GridBagConstraints();
+		 c.gridx = 3;
+		 c.gridy = 0;
+		 c.gridwidth = 3;
+		 c.weightx = 1;
+		 c.weighty = 1;
+		 c.insets = new Insets(0,10,0,10);
+		 c.anchor = GridBagConstraints.NORTHWEST;
+		 topPane.add(createCommentary1, c);
 
 		 //Adding the position Slider which will change as the video progresses
 		 positionSlider = new JSlider();
@@ -296,8 +337,10 @@ public class MainPlayerScreen extends JFrame {
 		 c = new GridBagConstraints();
 		 c.gridx = 1;
 		 c.gridy = 1;
-		 c.weightx = 1;
+		 c.gridwidth = 1;
+		 c.weightx = 0;
 		 c.weighty = 0;
+		 c.fill = GridBagConstraints.HORIZONTAL;
 		 c.insets = new Insets(0,10,10,10);
 
 		 c.fill = GridBagConstraints.HORIZONTAL;
@@ -341,16 +384,15 @@ public class MainPlayerScreen extends JFrame {
 		 mediaPlayerComponent.setPreferredSize(new Dimension(600,480));
 		 ff=false;
 		 rw=false;
-
 		 c = new GridBagConstraints();
 		 c.gridx = 0;
 		 c.gridy = 0;
 		 c.weightx = 1;
-		 c.weighty = 1.5;
-		 c.gridwidth = 3;
+		 c.weighty = 1;
+		 c.anchor = GridBagConstraints.NORTHWEST;
 		 c.fill = GridBagConstraints.BOTH;
 		 c.insets = new Insets(10,10,10,10);
-		 topPane.add(mediaPlayerComponent, c);	
+		 leftPane.add(mediaPlayerComponent, c);	
 
 		 //JButton which fast forwards through the video
 		 fastforward = new JButton(">>");
@@ -431,6 +473,13 @@ public class MainPlayerScreen extends JFrame {
 		 c.weightx = 1;
 		 c.weighty = 1;
 		 bottomPane.add(two, c);
+		 JLabel three = new JLabel();
+		 c = new GridBagConstraints();
+		 c.gridx = 5;
+		 c.gridy = 0;
+		 c.weightx = 1;
+		 c.weighty = 1;
+		 topPane.add(three, c);
 	 }
 	 
 	 public void setUpListeners(){
