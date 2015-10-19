@@ -1,11 +1,14 @@
-package vidVox;
+package vidVox.workers;
 
 import java.io.IOException;
 
 import javax.swing.SwingWorker;
 
+import vidVox.guiScreens.MainPlayerScreen;
+import vidVox.guiScreens.TextToMp3Screen;
+
 public class OverlayMp3OntoVideo extends SwingWorker<Void, String>{
-	//
+	//Fields used for my class.
 	private String audio;
 	private String originalVideo = MainPlayerScreen.mediapath;
 	private String filename;
@@ -15,32 +18,28 @@ public class OverlayMp3OntoVideo extends SwingWorker<Void, String>{
 	@Override
 	protected Void doInBackground() throws Exception {
 
-		//creating the bash process which will speak the user high score in festival
+		//This will overlay MP3 onto video
 		TextToMp3Screen.mainPlayerScreen.loadingScreen.setVisible(true);
-		String cmd = "ffmpeg -y -i "+originalVideo+" -i "+audio+" -filter_complex amix -strict -2 /tmp/V"+filename+TextToMp3Screen.videoNumber+".mp4";
-		System.out.println(cmd);
+		String cmd = "ffmpeg -y -i "+"\""+originalVideo+"\""+" -i "+"\""+audio+"\""+" -filter_complex amix -strict -2 \"/tmp/V"+filename+TextToMp3Screen.videoNumber+".mp4"+"\"";
 		ProcessBuilder x = new ProcessBuilder("/bin/bash", "-c", cmd );
 
 		try {
 			Process process = x.start();
 			process.waitFor();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-
+	//Constructor used for my class.
 	public OverlayMp3OntoVideo (String audio, String filename, Boolean overlay) {
 		this.audio = audio;
 		this.filename = filename;
 		this.overlay = overlay;
 	}
-
+	//This is code executed when my video has been overlayed. It will run the TexttoMP3 screen.
 	protected void done(){
-		System.out.println("we done bb");
 		MainPlayerScreen.mediapath = "/tmp/V"+filename+TextToMp3Screen.videoNumber+".mp4";
-		System.out.println(MainPlayerScreen.mediapath);
 		TextToMp3Screen.mainPlayerScreen.run();
 		TextToMp3Screen.mainPlayerScreen.loadingScreen.setVisible(false);
 		TextToMp3Screen.videoNumber++;

@@ -7,6 +7,9 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import vidVox.guiScreens.MainPlayerScreen;
+import vidVox.guiScreens.SaveDialogScreen;
+
 public class SaveVideoAs {
 
 	public static void saveVideoAs(){
@@ -23,14 +26,12 @@ public class SaveVideoAs {
 			FileFilter filter = new FileNameExtensionFilter("MP4 & AVI","mp4","avi");
 			SaveDialogScreen.ourFileSelector.resetChoosableFileFilters();
 			SaveDialogScreen.ourFileSelector.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			SaveDialogScreen.ourFileSelector.setSelectedFile(new File(Main.ourFileSelector.getSelectedFile().getName()));	
+			SaveDialogScreen.ourFileSelector.setSelectedFile(new File(OpenVideo.ourFileSelector.getSelectedFile().getName()));	
 			SaveDialogScreen.ourFileSelector.setFileFilter(filter);
 			SaveDialogScreen.ourFileSelector.showSaveDialog(null);    
 			if (!(SaveDialogScreen.ourFileSelector.getSelectedFile() == null)){
 				ourFile1=SaveDialogScreen.ourFileSelector.getSelectedFile();
 				mediaPath1=ourFile1.getAbsolutePath();
-				System.out.println(mediaPath1);
-				System.out.println(ourFile1);
 
 				if ((!(mediaPath1.endsWith(".mp4"))) && (!(mediaPath1.endsWith(".avi")))) {
 					mediaPath1 = mediaPath1+".mp4";

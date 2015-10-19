@@ -1,4 +1,4 @@
-package vidVox;
+package vidVox.guiScreens;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 public class SaveDialogScreen {
 	//
 	//a file chooser that will ask the user before it overwrites the file
-	protected static JFileChooser ourFileSelector= new JFileChooser(){
+	public static JFileChooser ourFileSelector= new JFileChooser(){
 		public void approveSelection() {
 			//if the file selected exists already
 			if (getSelectedFile().isFile()) {

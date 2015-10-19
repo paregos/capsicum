@@ -1,4 +1,4 @@
-package vidVox;
+package vidVox.workers;
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.text.DateFormat.Field;
@@ -21,13 +21,12 @@ public class TextToFile extends SwingWorker<Void, String>{
 		location = location.replaceAll("\\s+","");
 
 		//creating the bash process which will create a wav file from a text file
-		String cmd = "echo "+"\""+text+"\""+" > /tmp/"+filename;
+		String cmd = "echo "+"\""+text+"\""+" > \"/tmp/"+filename+"\"";
 		ProcessBuilder x = new ProcessBuilder("/bin/bash", "-c", cmd );
 
 		try {
 			Process process = x.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -39,7 +38,7 @@ public class TextToFile extends SwingWorker<Void, String>{
 		this.location = location;
 		this.overlay = overlay;
 	}
-
+	//This is the done method which will turn my text to a wave file.
 	protected void done(){
 		TextToWav k = new TextToWav(this.location, this.filename, this.overlay);
 		k.execute();

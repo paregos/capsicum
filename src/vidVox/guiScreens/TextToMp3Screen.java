@@ -1,4 +1,4 @@
-package vidVox;
+package vidVox.guiScreens;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,14 +17,17 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import vidVox.workers.PreviewTextSpeech;
+import vidVox.workers.TextToFile;
+
 
 public class TextToMp3Screen extends JFrame {
 	//
 	private JPanel pane;
 	private JTextField textbox;
-	static int videoNumber =0;
-	static String originalVideo;
-	static MainPlayerScreen mainPlayerScreen;
+	public static int videoNumber =0;
+	public static String originalVideo;
+	public static MainPlayerScreen mainPlayerScreen;
 
 
 	public TextToMp3Screen (MainPlayerScreen mainPlayerScreen) {
@@ -100,8 +103,8 @@ public class TextToMp3Screen extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (textbox.getText().length() > 75 || textbox.getText().length() < 1){
 					JOptionPane.showMessageDialog(null, "Error please enter between 1-75 characters");
-				}else if (textbox.getText().trim() == ""){
-					JOptionPane.showMessageDialog(null, "error please enter some characters, not only spaces");
+				}else if (textbox.getText().trim().equals("")){
+					JOptionPane.showMessageDialog(null, "Error please enter some characters, not only spaces");
 
 				}else{
 					PreviewTextSpeech k = new PreviewTextSpeech(textbox.getText());
@@ -115,8 +118,8 @@ public class TextToMp3Screen extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if ((textbox.getText().length() > 75) || (textbox.getText().length() < 1)){
 					JOptionPane.showMessageDialog(null, "Error please enter between 1-75 characters");
-				}else if (textbox.getText().trim() == ""){
-					JOptionPane.showMessageDialog(null, "error please enter some characters, not only spaces");
+				}else if (textbox.getText().trim().equals("")){
+					JOptionPane.showMessageDialog(null, "Error please enter some characters, not only spaces");
 				}else{
 
 					String mediaPath="~/";
@@ -130,8 +133,6 @@ public class TextToMp3Screen extends JFrame {
 					if (!(SaveDialogScreen.ourFileSelector.getSelectedFile() == null)){
 						ourFile=SaveDialogScreen.ourFileSelector.getSelectedFile();
 						mediaPath=ourFile.getAbsolutePath();
-						System.out.println(mediaPath);
-						System.out.println(ourFile);
 
 						//creates the mp3 file at the location
 						TextToFile k = new TextToFile(textbox.getText(), mediaPath, false);
@@ -140,7 +141,7 @@ public class TextToMp3Screen extends JFrame {
 				}
 			}
 		});
-
+		
 		overlay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -149,9 +150,9 @@ public class TextToMp3Screen extends JFrame {
 					JOptionPane.showMessageDialog(null, "Error please enter between 1-75 characters");
 
 				}else if (MainPlayerScreen.mediapath == null){
-					JOptionPane.showMessageDialog(null, "error open a video before adding commentary please");
-				}else if (textbox.getText().trim() == ""){
-					JOptionPane.showMessageDialog(null, "error please enter some characters, not only spaces");
+					JOptionPane.showMessageDialog(null, "Error open a video before adding commentary please");
+				}else if (textbox.getText().trim().equals("")){
+					JOptionPane.showMessageDialog(null, "Error please enter some characters, not only spaces");
 				}else{
 
 					//creates a mp3 file, places it in tmp and overlays the audio

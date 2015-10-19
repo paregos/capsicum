@@ -4,10 +4,12 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class Main {
+import vidVox.guiScreens.TextToMp3Screen;
+
+public class OpenVideo {
 	//This will choose my file and also a variable for my media path.
 	public static JFileChooser ourFileSelector= new JFileChooser();
-	static String mediaPath="";
+	public static String mediaPath="";
 
 	public static boolean grabFile() {
 		//

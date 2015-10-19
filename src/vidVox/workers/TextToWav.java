@@ -1,4 +1,4 @@
-package vidVox;
+package vidVox.workers;
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.text.DateFormat.Field;
@@ -14,11 +14,11 @@ public class TextToWav extends SwingWorker<Void, String>{
 	
 	@Override
 	protected Void doInBackground() throws Exception {
-		//
+
 		//creating the bash process which will create a wav file from a text file
 		//the wav file is named after the text which is spoken in it, and it is stored in /tmp/
 		// e.g hello is being spoken, /tmp/hello.wav exists
-		String cmd = "text2wave /tmp/"+filename+" -o /tmp/"+filename+".wav";
+		String cmd = "text2wave \"/tmp/"+filename+"\""+" -o \"/tmp/"+filename+".wav"+"\"";
 	
 		ProcessBuilder x = new ProcessBuilder("/bin/bash", "-c", cmd );
 				
@@ -26,7 +26,6 @@ public class TextToWav extends SwingWorker<Void, String>{
 			Process process = x.start();
 			process.waitFor();
 			} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			}
 		return null;

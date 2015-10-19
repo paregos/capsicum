@@ -1,4 +1,4 @@
-package vidVox;
+package vidVox.guiScreens;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,6 +17,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import vidVox.workers.OverlayMp3OntoVideo;
 
 public class AddCommentaryScreen extends JFrame{
 
@@ -81,26 +83,7 @@ public class AddCommentaryScreen extends JFrame{
 		c.insets = new Insets(0,5,0,10);
 		pane.add(start, c);
 
-		//creating a Jbutton which will add commentary to the end of the video
-		//		JButton end = new JButton("Add to the End");
-		//		c = new GridBagConstraints();
-		//		c.gridx = 1;
-		//		c.gridy = 1;
-		//		c.weightx = 1;
-		//		c.weighty = 0;
-		//		c.insets = new Insets(0,5,0,10);
-		//		pane.add(end, c);
-		//
-		//		//creating a Jbutton which will add commentary to a custom time of the video
-		//		JButton custom = new JButton("Add at a Custom Time");
-		//		c = new GridBagConstraints();
-		//		c.gridx = 2;
-		//		c.gridy = 1;
-		//		c.weightx = 0;
-		//		c.weighty = 0;
-		//		c.insets = new Insets(0,5,0,10);
-		//		pane.add(custom, c);
-
+		//Action listener which will allow you to choose a file for adding mp3.
 		selectMp3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -116,20 +99,16 @@ public class AddCommentaryScreen extends JFrame{
 				if (!(ourFileSelector.getSelectedFile() == null)){
 					ourFile=ourFileSelector.getSelectedFile();
 					mediaPath=ourFile.getAbsolutePath();
-					System.out.println(mediaPath);
-					System.out.println(ourFile);
-
 					textfield.setText(mediaPath);	
 				}
 			}
 		});
-
+		//Action listener for adding video at the start.
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				//Checks if commentary file is empty.
 				if (!(textfield.getText().equals("N/A"))){
-					System.out.println(textfield.getText());
 					OverlayMp3OntoVideo k = new OverlayMp3OntoVideo(textfield.getText(), "kkona", true);
 					k.execute();
 				}else{

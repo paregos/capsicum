@@ -1,10 +1,11 @@
-package vidVox;
+package vidVox.workers;
 
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import vidVox.guiScreens.MainPlayerScreen;
 //
 //Skip class using swing worker which is used to allow fast forward and rewinding.
 public class Skip extends SwingWorker<Void,Integer>{
@@ -26,10 +27,10 @@ public class Skip extends SwingWorker<Void,Integer>{
 	@Override
 	//Method which will occur in the background.
 	protected Void doInBackground() throws Exception {
-		while (skip==true){
+		while ((skip==true)&&(isCancelled()==false)){
 			Thread.sleep(100);
 			//Updates the GUI.
-			player.updateUIState();	
+			player.updateGUI();	
 			float positionValue = player.positionSlider.getValue() / 1000.0f;
 			//This will check for when it is fastforwarding and reaches end of video, it will pause it
 			//otherwise it will operate normally or it can rewind when it reaches end of video.

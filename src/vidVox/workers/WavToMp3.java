@@ -1,4 +1,4 @@
-package vidVox;
+package vidVox.workers;
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.text.DateFormat.Field;
@@ -22,9 +22,7 @@ public class WavToMp3 extends SwingWorker<Void, String>{
 			location = location+".mp3";
 		}
 
-		String cmd = "ffmpeg -y -i /tmp/"+filename+".wav -codec:a libmp3lame -qscale:a 2 "+location;
-		System.out.println(cmd);
-		System.out.println(overlay);
+		String cmd = "ffmpeg -y -i \"/tmp/"+filename+".wav\" -codec:a libmp3lame -qscale:a 2 "+"\""+location+"\"";
 		ProcessBuilder x = new ProcessBuilder("/bin/bash", "-c", cmd );
 
 		try {
@@ -47,7 +45,6 @@ public class WavToMp3 extends SwingWorker<Void, String>{
 	protected void done(){
 		//if this mp3 needs to be overlayed
 		if (overlay){
-			System.out.println("we here");
 			OverlayMp3OntoVideo k = new OverlayMp3OntoVideo(this.location, this.filename, this.overlay);
 			k.execute();
 			// do the overlay 

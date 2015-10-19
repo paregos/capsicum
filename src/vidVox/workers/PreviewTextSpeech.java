@@ -1,4 +1,4 @@
-package vidVox;
+package vidVox.workers;
 
 import java.io.IOException;
 import java.lang.reflect.*;
@@ -20,12 +20,11 @@ public class PreviewTextSpeech extends SwingWorker<Void, String>{
 		try {
 			Process process = x.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-
+	//Constructor
 	public PreviewTextSpeech(String text){
 		this.text = text;
 	}
