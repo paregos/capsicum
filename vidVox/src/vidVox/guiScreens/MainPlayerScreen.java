@@ -1,10 +1,19 @@
 package vidVox.guiScreens;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,6 +22,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -28,16 +38,6 @@ import vidVox.MoveVideoFile;
 import vidVox.OpenVideo;
 import vidVox.SaveVideoAs;
 import vidVox.workers.Skip;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class MainPlayerScreen extends JFrame {
 	// Fields which are used within this class and package.
@@ -365,12 +365,49 @@ public class MainPlayerScreen extends JFrame {
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		rightPane.add(createCommentary1, c);
-
+		
 		// Creating a table which will hold all of the information relating to commentaries being added 
-		table = new JTable();
-		table.setModel(new DefaultTableModel(new Object[][][] { { null, null, null },
-				{ null, null, null}, { null, null, null}, { null, null, null}, },
-				new String[] { "Name", "Time" }));
+		JTable table2;
+		//CHANGE NAMES
+		final DefaultTableModel audioOverlayTable;
+		String[] audioOverlayOptions = {"Audio File Name", "Duration", "Time to Add", "Add?"};
+		audioOverlayTable = new DefaultTableModel(audioOverlayOptions,0){
+			//Code from http://stackoverflow.com/questions/18099717/how-to-add-jcheckbox-in-jtable
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				Class columnType = String.class;
+				switch (columnIndex) {
+				case 0:
+					columnType = String.class;
+					break;
+				case 1:
+					columnType = String.class;
+					break;
+				case 2:
+					columnType = String.class;
+					break;
+				case 3:
+					columnType = Boolean.class;
+					break;
+				}
+				return columnType;
+			}
+		};
+		table2 = new JTable(audioOverlayTable);
+		table2.setModel(audioOverlayTable);
+
+		Object[] data = {"yo", "yo", "yo", true};
+		audioOverlayTable.addRow(data);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(20, 75, 400, 400);
+		scrollPane.setViewportView(table2);
+		scrollPane.setMinimumSize( scrollPane.getPreferredSize() );
+		
+//		table = new JTable();
+//		table.setModel(new DefaultTableModel(new Object[][][] { { null, null, null },
+//				{ null, null, null}, { null, null, null}, { null, null, null}, },
+//				new String[] { "Name", "Time" }));
 //		{
 //			public boolean isCellEditable(int row, int column) {
 //				return false;
@@ -378,14 +415,14 @@ public class MainPlayerScreen extends JFrame {
 //		});
 		c = new GridBagConstraints();
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.gridwidth = 3;
 		c.gridheight = 3;
 		c.weightx = 1;
 		c.weighty = 1;
 		c.insets = new Insets(30, 10, 0, 10);
 		c.fill = GridBagConstraints.BOTH;
-		rightPane.add(table, c);
+		rightPane.add(scrollPane, c);
 
 		// Adding the position Slider which will change as the video progresses
 		positionSlider = new JSlider();
