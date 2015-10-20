@@ -43,6 +43,7 @@ import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import vidVox.OpenVideo;
 import vidVox.SaveVideoAs;
 import vidVox.guiScreens.panes.CommentaryPane;
+import vidVox.guiScreens.panes.ControlsPane;
 import vidVox.guiScreens.panes.EffectsPane;
 import vidVox.workers.MoveVideoFile;
 import vidVox.workers.OverlayMp3OntoVideo;
@@ -51,21 +52,19 @@ import vidVox.workers.Skip;
 public class MainPlayerScreen extends JFrame {
 	// Fields which are used within this class and package.
 	MainPlayerScreen mainplayer = this;
-	private JPanel topPane, bottomPane,leftPane, effectsPane;
-	private CommentaryPane rightPane;
+	public static JPanel topPane, bottomPane,leftPane, effectsPane, rightPane;
 	public static EmbeddedMediaPlayerComponent mediaPlayerComponent;
-	Skip ffswing, rwswing;
+	public static Skip ffswing, rwswing;
 	public static String mediapath;
 	public static LoadingScreen loadingScreen = new LoadingScreen();
 	public static AddCommentaryScreen addCommentaryScreen;
 	private boolean pressedWhilePlaying = false;
 	public static TextToMp3Screen createCommentaryScreen;
-	private int currentVolume;
-	private boolean ff = false, rw = false, refresh = false;
+	public static int currentVolume;
+	public static boolean ff = false, rw = false, refresh = false;
 	public long totaltime;
 	private ChangeListener listener;
-	private final ScheduledExecutorService executorService = Executors
-			.newSingleThreadScheduledExecutor();
+	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
 	// Set up the GridBag Layout for my screen.
 	GridBagLayout gbl_topPane;
@@ -76,11 +75,9 @@ public class MainPlayerScreen extends JFrame {
 	GridBagConstraints c;
 
 	// Buttons, sliders and labels which are used in my GUI for users to click.
-	JButton fastforward, rewind, mute, play;
-	JSlider volume;
-	JSeparator separator;
+
 	public JSlider positionSlider;
-	public static JLabel volumeLabel, endLabel;
+	public static JLabel endLabel;
 	public static JLabel timeLabel = new JLabel("00:00:00");
 	
 
@@ -101,8 +98,8 @@ public class MainPlayerScreen extends JFrame {
 	public static void main(String[] args) {
 		// Initialising all the screens which will be used in the video player.
 		MainPlayerScreen frame = new MainPlayerScreen();
-		frame.setBounds(300, 200, 1350, 610);
-		frame.setMinimumSize(new Dimension(1350, 610));
+		frame.setBounds(125, 200, 1400, 610);
+		frame.setMinimumSize(new Dimension(1400, 610));
 		frame.setVisible(true);
 		createCommentaryScreen = new TextToMp3Screen(frame);
 		createCommentaryScreen.setBounds(385, 475, 650, 100);
@@ -300,10 +297,9 @@ public class MainPlayerScreen extends JFrame {
 		// contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(topPane);
 
-		// creating the content pane which will store all of the control
-		// components
+		// creating the content pane which will store all of the control components
 		gbl_bottomPane = new GridBagLayout();
-		bottomPane = new JPanel(gbl_bottomPane);
+		bottomPane = new ControlsPane(this);
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 2;
@@ -341,6 +337,7 @@ public class MainPlayerScreen extends JFrame {
 		c.gridwidth = 8;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		topPane.add(effectsPane, c);
+		effectsPane.setVisible(false);
 
 		// creating the content pane which will store all of the control
 		gbl_leftPane = new GridBagLayout();
@@ -363,7 +360,6 @@ public class MainPlayerScreen extends JFrame {
 		c.weighty = 0;
 		c.anchor = GridBagConstraints.WEST;
 		c.insets = new Insets(0, 10, 10, 10);
-		// c.fill = GridBagConstraints.HORIZONTAL;
 		topPane.add(timeLabel, c);
 
 		// Adding a Jlabel which will be the ending time of the video
@@ -375,15 +371,7 @@ public class MainPlayerScreen extends JFrame {
 		c.weighty = 0;
 		c.anchor = GridBagConstraints.EAST;
 		c.insets = new Insets(0, 10, 10, 10);
-		// c.fill = GridBagConstraints.HORIZONTAL;
 		topPane.add(endLabel, c);
-
-		// ============RIGHT
-		// PANE====================================================
-
-
-
-		//=====================================VIDEO PLAYER =====================================
 
 		// Adding the position Slider which will change as the video progresses
 		positionSlider = new JSlider();
@@ -399,7 +387,6 @@ public class MainPlayerScreen extends JFrame {
 		c.weighty = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(0, 10, 10, 10);
-
 		c.fill = GridBagConstraints.HORIZONTAL;
 		topPane.add(positionSlider, c);
 
@@ -439,7 +426,7 @@ public class MainPlayerScreen extends JFrame {
 
 		// Adding in the video area where a mp4 can be played
 		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-	//	mediaPlayerComponent.setPreferredSize(new Dimension(800, 480));
+		//mediaPlayerComponent.setPreferredSize(new Dimension(1300, 480));
 		ff = false;
 		rw = false;
 		c = new GridBagConstraints();
@@ -452,277 +439,10 @@ public class MainPlayerScreen extends JFrame {
 		c.insets = new Insets(10, 10, 10, 10);
 		leftPane.add(mediaPlayerComponent, c);
 
-		// JButton which fast forwards through the video
-		fastforward = new JButton(">>");
-		c = new GridBagConstraints();
-		c.gridx = 3;
-		c.gridy = 0;
-		c.weightx = 0;
-		c.weighty = 1;
-		c.insets = new Insets(0, 5, 0, 10);
-		// c.anchor = GridBagConstraints.EAST;
-		bottomPane.add(fastforward, c);
-
-		// JButton which fast forwards through the video
-		rewind = new JButton("<<");
-		c = new GridBagConstraints();
-		c.gridx = 1;
-		c.gridy = 0;
-		c.weightx = 0;
-		c.weighty = 1;
-		c.insets = new Insets(0, 10, 0, 5);
-		// c.anchor = GridBagConstraints.WEST;
-		bottomPane.add(rewind, c);
-
-		// JButton which Plays the video
-		play = new JButton("pause");
-		c = new GridBagConstraints();
-		c.gridx = 2;
-		c.gridy = 0;
-		c.weightx = 0;
-		c.weighty = 1;
-		c.insets = new Insets(0, 5, 0, 5);
-		bottomPane.add(play, c);
-
-		// Volume label
-		volumeLabel = new JLabel("Volume");
-		c = new GridBagConstraints();
-		c.gridx = 5;
-		c.gridy = 0;
-		c.weightx = 0;
-		c.weighty = 1;
-		c.insets = new Insets(0, 20, 0, 10);
-		c.anchor = GridBagConstraints.WEST;
-		bottomPane.add(volumeLabel, c);
-
-		// JButton which mutes the audio of the video
-		mute = new JButton("Mute");
-		c = new GridBagConstraints();
-		c.gridx = 7;
-		c.gridy = 0;
-		c.weightx = 0;
-		c.weighty = 1;
-		c.insets = new Insets(0, 10, 0, 10);
-		c.anchor = GridBagConstraints.EAST;
-		bottomPane.add(mute, c);
-
-		// JSlider which controls the volume of the video
-		volume = new JSlider();
-		c = new GridBagConstraints();
-		c.gridx = 6;
-		c.gridy = 0;
-		c.weightx = 0;
-		c.weighty = 1;
-		c.insets = new Insets(0, 10, 0, 10);
-		bottomPane.add(volume, c);
-
-		// adding empty jlabels to the control panel to space out the buttons
-		// nicely
-		JLabel one = new JLabel();
-		c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 0;
-		c.weightx = 1;
-		c.weighty = 1;
-		bottomPane.add(one, c);
-		JLabel two = new JLabel();
-		c = new GridBagConstraints();
-		c.gridx = 4;
-		c.gridy = 0;
-		c.weightx = 1;
-		c.weighty = 1;
-		bottomPane.add(two, c);
-
-		// JLabel three = new JLabel();
-		// c = new GridBagConstraints();
-		// c.gridx = 3;
-		// c.gridy = 1;
-		// c.weightx = 1;
-		// c.weighty = 1;
-		// rightPane.add(three, c);
-		// JLabel four = new JLabel();
-		// c = new GridBagConstraints();
-		// c.gridx = 5;
-		// c.gridy = 1;
-		// c.weightx = 1;
-		// c.weighty = 1;
-		// topPane.add(four, c);
-		// JLabel five = new JLabel();
-		// c = new GridBagConstraints();
-		// c.gridx = 4;
-		// c.gridy = 1;
-		// c.weightx = 1;
-		// c.weighty = 1;
-		// topPane.add(five, c);
 	}
 
 	public void setUpListeners() {
-		// Adds an action listener when the play button is clicked.
-		play.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Check if fast forwarding or rewind is on when the play/pause
-				// button is clicked
-				// and will cancel it.
-				if (ff == true) {
-					ffswing.cancel(true);
-					ff = false;
-				}
-				if (rw == true) {
-					rwswing.cancel(true);
-					rw = false;
-				}
-				// Pauses or plays the video depending if it is playing or
-				// paused respectively and also
-				// changes the text of the button to add a more user friendly
-				// experience.
-				if (play.getText().equals("play")) {
-					play.setText("pause");
-					mediaPlayerComponent.getMediaPlayer().play();
-
-				} else {
-					play.setText("play");
-					mediaPlayerComponent.getMediaPlayer().setPause(true);
-				}
-			}
-		});
-		// Added action listener for the rewind(<<) button when it is clicked.
-		rewind.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Press rewind button while fastforwarding and not rewinding
-				// will result in fast
-				// forward being canceled and rewind being used.
-				if ((ff == true) && (rw == false)) {
-					rwswing = new Skip(mediaPlayerComponent, -1000, mainplayer);
-					ffswing.cancel(true);
-					rwswing.skip = true;
-					rwswing.execute();
-					rw = true;
-					ff = false;
-					// Press rewind button while not rewinding or fastforwarding
-					// will result in rewind
-					// just being executed.
-				} else if ((rw == false) && (ff == false)) {
-					rwswing = new Skip(mediaPlayerComponent, -1000, mainplayer);
-					rwswing.skip = true;
-					rwswing.execute();
-					rw = true;
-					// Press rewind button while rewinding and not fast
-					// forwarding will cause rewind
-					// to be canceled.
-				} else if ((rw == true) && (ff == false)) {
-					rwswing.cancel(true);
-					rw = false;
-					// Will pause the component if rewind is canceled and it was
-					// paused when rewinding.
-					if (play.getText().equals("play")) {
-						mediaPlayerComponent.getMediaPlayer().setPause(true);
-					}
-					// Last case where you press the rewind button whilst its
-					// rewinding and fastforwarding
-					// which cant occur but act as a backup code in base of
-					// bugs.
-				} else {
-					rwswing.cancel(true);
-					rw = false;
-					ffswing.cancel(true);
-					ff = false;
-					// Sets the play button to an appropriate button.
-					if (play.getText().equals("play")) {
-						mediaPlayerComponent.getMediaPlayer().setPause(true);
-					}
-				}
-			}
-		});
-		// Added action listener for the fastforward (>>) button when it is
-		// clicked.
-		fastforward.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Checks for when fastforward button is clicked when
-				// fastforward is off and rewind
-				// is on. It will cause the rewind function to cancel and
-				// execute the fastforward.
-				if ((ff == false) && (rw == true)) {
-					ffswing = new Skip(mediaPlayerComponent, 1000, mainplayer);
-					rwswing.cancel(true);
-					ffswing.skip = true;
-					ffswing.execute();
-					ff = true;
-					rw = false;
-					// Checks whether fastforward button is clicked when
-					// fastforward is off and rewind
-					// is off. It will cause fastforward to execute.
-				} else if ((ff == false) && (rw == false)) {
-					ffswing = new Skip(mediaPlayerComponent, 1000, mainplayer);
-					ffswing.skip = true;
-					ffswing.execute();
-					ff = true;
-					// Checks whether fastforward button is clicked when
-					// fastforward is on and rewind
-					// is off. It will cause fastforward to stop.
-				} else if ((ff == true) && (rw == false)) {
-					// ffswing.skip=false;
-					ffswing.cancel(true);
-					ff = false;
-					if (play.getText().equals("play")) {
-						mediaPlayerComponent.getMediaPlayer().setPause(true);
-					}
-					// Last case where you press the fastforward button whilst
-					// its rewinding and fastforwarding
-					// which cant occur but act as a backup code in base of
-					// bugs.
-				} else {
-					rwswing.cancel(true);
-					rw = false;
-					ffswing.cancel(true);
-					ff = false;
-					if (play.getText().equals("play")) {
-						mediaPlayerComponent.getMediaPlayer().setPause(true);
-					}
-				}
-			}
-		});
-		// This will allow you to identify when the volume bar is being changed
-		// and then set the value to the position
-		// of the slider to the correct volume.
-		volume.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				JSlider source = (JSlider) e.getSource();
-				mediaPlayerComponent.getMediaPlayer().setVolume(
-						source.getValue());
-			}
-		});
-		// This will allow you to click anywhere on the volume slider and this
-		// will update the volume bar
-		volume.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				JSlider sourceSlider = (JSlider) e.getSource();
-				BasicSliderUI ui = (BasicSliderUI) sourceSlider.getUI();
-				int value = ui.valueForXPosition(e.getX());
-				volume.setValue(value);
-			}
-		});
-		// This will allow you to mute the volume or unmute it back to the
-		// previous value.
-		mute.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Checks if volume is not already muted and if not, mute it.
-				if (volume.getValue() != 0) {
-					currentVolume = volume.getValue();
-					volume.setValue(0);
-					// mediaPlayerComponent.getMediaPlayer().mute();
-					// If muted already, and clicked mute again, it will refer
-					// back to the previous value it was just before being
-					// muted.
-				} else {
-					volume.setValue(currentVolume);
-				}
-			}
-		});
+		
 		// This will allow you to choose a file and play it.
 		openVideo.addActionListener(new ActionListener() {
 			@Override
@@ -741,10 +461,10 @@ public class MainPlayerScreen extends JFrame {
 					}
 					ff = false;
 					rw = false;
-					play.setText("pause");
+					ControlsPane.play.setText("pause");
 					run();
 				}
-				if (play.getText().equals("pause")) {
+				if (ControlsPane.play.getText().equals("pause")) {
 					// If user decided to cancel the operation, it will continue
 					// playing the video if it is being played.
 					mediaPlayerComponent.getMediaPlayer().play();
@@ -851,12 +571,9 @@ public class MainPlayerScreen extends JFrame {
 					@Override
 					public void finished(MediaPlayer mediaPlayer) {
 						mediaPlayerComponent.getMediaPlayer().stop();
-						play.setText("play");
+						ControlsPane.play.setText("play");
 					}
 				});
-
-		// ==============Right pane action listeners=======================
-
 
 	}
 }

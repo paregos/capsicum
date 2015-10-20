@@ -9,9 +9,14 @@ import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -22,10 +27,11 @@ import vidVox.workers.OverlayMp3OntoVideo;
 
 public class CommentaryPane extends JPanel {
 
-	public static JButton createCommentary1, removeCommentary, mergeCommentary, addCommentary1;
+	public static JButton createCommentary1, removeCommentary, mergeCommentary, addCommentary1, fxMenu;
 	private GridBagConstraints c;
 	DefaultTableModel audioOverlayTable = null;
 	public JTable table2;
+	private JSeparator separator;
 	
 	public CommentaryPane(){
 		setUpLayout();
@@ -55,7 +61,7 @@ public class CommentaryPane extends JPanel {
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 5;
-		c.gridwidth = 1;
+		c.gridwidth = 4;
 		c.weightx = 1;
 		c.weighty = 0;
 		c.insets = new Insets(0, 10, 5, 10);
@@ -88,6 +94,32 @@ public class CommentaryPane extends JPanel {
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(addCommentary1, c);
+		
+		// JButton which opens the special fx menu
+		fxMenu = new JButton("Open special video effects tab");
+		c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 7;
+		c.gridwidth = 4;
+		c.weightx = 1;
+		c.weighty = 0;
+		c.insets = new Insets(0, 10, 5, 10);
+		c.anchor = GridBagConstraints.SOUTH;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		this.add(fxMenu, c);
+		
+		// JSeperator which adds Commentary to the list
+		separator = new JSeparator();
+		c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 6;
+		c.gridwidth = 4;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.insets = new Insets(5, 10, 10, 5);
+		c.anchor = GridBagConstraints.NORTH;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		this.add(separator, c);
 
 		// Creating a table which will hold all of the information relating to
 		// commentaries being added
@@ -140,6 +172,36 @@ public class CommentaryPane extends JPanel {
 	}
 	
 	public void setUpListeners() {
+		
+		// Action listener for fxMenu button, it will open or close the menu
+		fxMenu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (MainPlayerScreen.effectsPane.isVisible()){
+					MainPlayerScreen.effectsPane.setVisible(false);
+					fxMenu.setText("Open special video effects tab");
+				}else{
+					MainPlayerScreen.effectsPane.setVisible(true);
+					fxMenu.setText("Close special video effects tab");
+				}
+				
+			}
+		});
+		
+		// Action listener for the gamma slider of the video
+		removeCommentary.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+		
+			try{
+			audioOverlayTable.removeRow(table2.getSelectedRow());
+			}catch (Exception e2){
+				JOptionPane.showMessageDialog(null, "Error please select a row before trying to remove");	
+			}
+			
+			}
+		});
 		
 		// Opens a file chooser and lets the user select a commentary to add to
 		// the table
