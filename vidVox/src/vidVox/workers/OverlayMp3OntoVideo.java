@@ -10,7 +10,7 @@ import vidVox.guiScreens.TextToMp3Screen;
 
 public class OverlayMp3OntoVideo extends SwingWorker<Void, String>{
 	//Fields used for my class.
-	private String audio;
+	private String command;
 	private String originalVideo = MainPlayerScreen.mediapath;
 	private String filename;
 	private Boolean overlay;
@@ -21,9 +21,12 @@ public class OverlayMp3OntoVideo extends SwingWorker<Void, String>{
 
 		//This will overlay MP3 onto video
 		TextToMp3Screen.mainPlayerScreen.loadingScreen.setVisible(true);
-		String cmd = "ffmpeg -y -i "+"\""+originalVideo+"\""+" -i "+"\""+audio+"\""+" -filter_complex amix -strict -2 \"/tmp/V"+filename+TextToMp3Screen.videoNumber+".mp4"+"\"";
+		String cmd = command+"\"/tmp/V"+filename+TextToMp3Screen.videoNumber+".mp4"+"\"";
 		ProcessBuilder x = new ProcessBuilder("/bin/bash", "-c", cmd );
 
+		System.out.println(cmd);
+		//ffmpeg -y -i video.avi -itsoffset 2.5 -i music.mp3 -itsoffset 5.0 -i music1.mp3 -map 0:0 -map 1:0 -map 2:0 -c:v copy -async 1 -filter_complex amix=inputs=3 out.avi
+		
 		try {
 			Process process = x.start();
 			process.waitFor();
@@ -33,8 +36,8 @@ public class OverlayMp3OntoVideo extends SwingWorker<Void, String>{
 		return null;
 	}
 	//Constructor used for my class.
-	public OverlayMp3OntoVideo (String audio, String filename, Boolean overlay) {
-		this.audio = audio;
+	public OverlayMp3OntoVideo (String command, String filename, Boolean overlay) {
+		this.command = command;
 		this.filename = filename;
 		this.overlay = overlay;
 	}

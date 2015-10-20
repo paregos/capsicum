@@ -10,11 +10,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -22,12 +24,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicSliderUI;
 import javax.swing.table.DefaultTableModel;
 
@@ -37,7 +42,9 @@ import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import vidVox.MoveVideoFile;
 import vidVox.OpenVideo;
 import vidVox.SaveVideoAs;
+import vidVox.workers.OverlayMp3OntoVideo;
 import vidVox.workers.Skip;
+
 
 public class MainPlayerScreen extends JFrame {
 	// Fields which are used within this class and package.
@@ -54,8 +61,8 @@ public class MainPlayerScreen extends JFrame {
 	private boolean ff = false, rw = false, refresh = false;
 	public long totaltime;
 	private ChangeListener listener;
-	private final ScheduledExecutorService executorService = Executors
-			.newSingleThreadScheduledExecutor();
+	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	DefaultTableModel audioOverlayTable = null;
 
 	// Set up the GridBag Layout for my screen.
 	GridBagLayout gbl_topPane;
@@ -65,11 +72,11 @@ public class MainPlayerScreen extends JFrame {
 	GridBagConstraints c;
 
 	// Buttons, sliders and labels which are used in my GUI for users to click.
-	JButton fastforward, rewind, mute, play, createCommentary1;
+	JButton fastforward, rewind, mute, play, createCommentary1, addCommentary1, mergeCommentary;
 	JSlider volume;
 	public JSlider positionSlider;
 	JLabel volumeLabel, timeLabel, endLabel;
-	JTable table;
+	public JTable table2;
 
 	// Menu at the top which allows users to select their appropriate options.
 	JMenuBar menuBar;
@@ -88,8 +95,8 @@ public class MainPlayerScreen extends JFrame {
 	public static void main(String[] args) {
 		// Initialising all the screens which will be used in the video player.
 		MainPlayerScreen frame = new MainPlayerScreen();
-		frame.setBounds(300, 200, 1300, 590);
-		frame.setMinimumSize(new Dimension(1300, 590));
+		frame.setBounds(300, 200, 1300, 610);
+		frame.setMinimumSize(new Dimension(1300, 610));
 		frame.setVisible(true);
 		createCommentaryScreen = new TextToMp3Screen(frame);
 		createCommentaryScreen.setBounds(385, 475, 650, 100);
@@ -239,6 +246,7 @@ public class MainPlayerScreen extends JFrame {
 						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS
 								.toMinutes(millis)));
 		timeLabel.setText(s);
+		addCommentary1.setText("Select Mp3 Commentary to add at "+s);
 	}
 
 	// Updates the position of the position slider based on value given.
@@ -296,7 +304,8 @@ public class MainPlayerScreen extends JFrame {
 		c.weightx = 1;
 		c.weighty = 0;
 		c.gridwidth = 4;
-		c.anchor = GridBagConstraints.SOUTH;
+		c.insets = new Insets(0, 0, 5, 0);
+		c.anchor = GridBagConstraints.SOUTHWEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		topPane.add(bottomPane, c);
 
@@ -358,21 +367,47 @@ public class MainPlayerScreen extends JFrame {
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
-		c.gridwidth = 3;
+		c.gridwidth = 4;
 		c.weightx = 1;
 		c.weighty = 0;
 		c.insets = new Insets(10, 10, 0, 10);
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		rightPane.add(createCommentary1, c);
-		
-		// Creating a table which will hold all of the information relating to commentaries being added 
-		JTable table2;
-		//CHANGE NAMES
-		final DefaultTableModel audioOverlayTable;
-		String[] audioOverlayOptions = {"Audio File Name", "Duration", "Time to Add", "Add?"};
-		audioOverlayTable = new DefaultTableModel(audioOverlayOptions,0){
-			//Code from http://stackoverflow.com/questions/18099717/how-to-add-jcheckbox-in-jtable
+
+		// JButton which add selected Commentary to the video
+		mergeCommentary = new JButton("Merge selected commentary to video");
+		c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 1;
+		c.weightx = 1;
+		c.weighty = 0;
+		c.insets = new Insets(0, 10, 5, 10);
+		c.anchor = GridBagConstraints.SOUTH;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		rightPane.add(mergeCommentary, c);
+
+		// JButton which adds Commentary to the list
+		addCommentary1 = new JButton("Select Mp3 Commentary to add at "+timeLabel.getText());
+		c = new GridBagConstraints();
+		c.gridx = 1;
+		c.gridy = 4;
+		c.gridwidth = 2;
+		c.weightx = 1;
+		c.weighty = 0;
+		c.insets = new Insets(0, 10, 5, 10);
+		c.anchor = GridBagConstraints.SOUTH;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		rightPane.add(addCommentary1, c);
+
+		// Creating a table which will hold all of the information relating to
+		// commentaries being added
+		String[] audioOverlayOptions = { "Commentary File Name", "Duration",
+				"Time inserted", "Include?" };
+		audioOverlayTable = new DefaultTableModel(audioOverlayOptions, 0) {
+			// Code from
+			// http://stackoverflow.com/questions/18099717/how-to-add-jcheckbox-in-jtable
 			@Override
 			public Class<?> getColumnClass(int columnIndex) {
 				Class columnType = String.class;
@@ -396,31 +431,19 @@ public class MainPlayerScreen extends JFrame {
 		table2 = new JTable(audioOverlayTable);
 		table2.setModel(audioOverlayTable);
 
-		Object[] data = {"yo", "yo", "yo", true};
-		audioOverlayTable.addRow(data);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(20, 75, 400, 400);
+		// scrollPane.setBounds(20, 75, 400, 400);
 		scrollPane.setViewportView(table2);
-		scrollPane.setMinimumSize( scrollPane.getPreferredSize() );
-		
-//		table = new JTable();
-//		table.setModel(new DefaultTableModel(new Object[][][] { { null, null, null },
-//				{ null, null, null}, { null, null, null}, { null, null, null}, },
-//				new String[] { "Name", "Time" }));
-//		{
-//			public boolean isCellEditable(int row, int column) {
-//				return false;
-//			}
-//		});
+		// scrollPane.setMinimumSize( scrollPane.getPreferredSize() );
 		c = new GridBagConstraints();
 		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 3;
+		c.gridy = 1;
+		c.gridwidth = 4;
 		c.gridheight = 3;
 		c.weightx = 1;
 		c.weighty = 1;
-		c.insets = new Insets(30, 10, 0, 10);
+		c.insets = new Insets(15, 10, 5, 10);
 		c.fill = GridBagConstraints.BOTH;
 		rightPane.add(scrollPane, c);
 
@@ -446,6 +469,7 @@ public class MainPlayerScreen extends JFrame {
 		menuBar = new JMenuBar();
 		c = new GridBagConstraints();
 		setJMenuBar(menuBar);
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
 		// adds a menu to the menu bar
 		video = new JMenu("Video");
@@ -570,27 +594,28 @@ public class MainPlayerScreen extends JFrame {
 		c.weightx = 1;
 		c.weighty = 1;
 		bottomPane.add(two, c);
-		JLabel three = new JLabel();
-		c = new GridBagConstraints();
-		c.gridx = 6;
-		c.gridy = 1;
-		c.weightx = 1;
-		c.weighty = 1;
-		topPane.add(three, c);
-		JLabel four = new JLabel();
-		c = new GridBagConstraints();
-		c.gridx = 5;
-		c.gridy = 1;
-		c.weightx = 1;
-		c.weighty = 1;
-		topPane.add(four, c);
-		JLabel five = new JLabel();
-		c = new GridBagConstraints();
-		c.gridx = 4;
-		c.gridy = 1;
-		c.weightx = 1;
-		c.weighty = 1;
-		topPane.add(five, c);
+		
+//		JLabel three = new JLabel();
+//		c = new GridBagConstraints();
+//		c.gridx = 3;
+//		c.gridy = 1;
+//		c.weightx = 1;
+//		c.weighty = 1;
+//		rightPane.add(three, c);
+//		JLabel four = new JLabel();
+//		c = new GridBagConstraints();
+//		c.gridx = 5;
+//		c.gridy = 1;
+//		c.weightx = 1;
+//		c.weighty = 1;
+//		topPane.add(four, c);
+//		JLabel five = new JLabel();
+//		c = new GridBagConstraints();
+//		c.gridx = 4;
+//		c.gridy = 1;
+//		c.weightx = 1;
+//		c.weighty = 1;
+//		topPane.add(five, c);
 	}
 
 	public void setUpListeners() {
@@ -891,5 +916,63 @@ public class MainPlayerScreen extends JFrame {
 						play.setText("play");
 					}
 				});
+		
+		//==============Right pane action listeners=======================
+		
+				// Opens a file chooser and lets the user select a commentary to add to the table
+					addCommentary1.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						JFileChooser ourFileSelector= new JFileChooser();
+						File ourFile;
+						String mediaPath = null;
+
+						FileFilter filter = new FileNameExtensionFilter("MP3 FILES","mp3");
+						ourFileSelector.resetChoosableFileFilters();
+						ourFileSelector.setFileSelectionMode(JFileChooser.FILES_ONLY);
+						ourFileSelector.setFileFilter(filter);
+
+						ourFileSelector.showOpenDialog(null);
+						if (!(ourFileSelector.getSelectedFile() == null)){
+							ourFile=ourFileSelector.getSelectedFile();
+							mediaPath=ourFile.getAbsolutePath();
+							Object[] data = { mediaPath, "0", timeLabel.getText(), true };
+							audioOverlayTable.addRow(data);
+						}
+					}
+				});
+					// Merges all selected commentary on to the current video
+					mergeCommentary.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+						
+							int numberOfAudio = 1;
+							String command = "ffmpeg -y -i \""+TextToMp3Screen.originalVideo+"\" ";
+							
+								//	 + " -map 0:0 -map 1:0 -map 2:0 -c:v copy -async 1 -filter_complex amix=inputs=3 out.avi"
+									
+							for (int i = 0; i < table2.getRowCount(); i++){
+								if ((boolean) table2.getValueAt(i, 3)){
+
+									String timeToAdd = (String)table2.getValueAt(i, 2);
+									String[] timeValues = timeToAdd.split(":");
+									int timeInSeconds = Integer.parseInt(timeValues[0])*3600 + Integer.parseInt(timeValues[1])*60 + Integer.parseInt(timeValues[2]);
+
+									command = command+"-itsoffset "+timeInSeconds+" -i "+(String)table2.getValueAt(i, 0)+" ";
+									numberOfAudio++;
+								}
+							}
+							
+							command = command + "-map 0:v:0 ";
+							for(int k = 1; k<numberOfAudio; k++){
+								command = command + "-map "+k+":0 ";
+							}
+							command = command + "-c:v copy -async 1 -filter_complex amix=inputs="+numberOfAudio+" ";
+							
+							OverlayMp3OntoVideo k = new OverlayMp3OntoVideo(command, "kkona", true);
+							k.execute();
+							
+						}
+					});
 	}
 }
