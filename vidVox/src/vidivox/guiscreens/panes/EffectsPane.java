@@ -1,4 +1,4 @@
-package vidVox.guiScreens.panes;
+package vidivox.guiscreens.panes;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,7 +13,7 @@ import javax.swing.event.ChangeListener;
 
 import uk.co.caprica.vlcj.binding.LibVlcConst;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import vidVox.guiScreens.MainPlayerScreen;
+import vidivox.guiscreens.MainPlayerScreen;
 
 public class EffectsPane extends JPanel {
 

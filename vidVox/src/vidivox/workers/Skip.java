@@ -1,4 +1,4 @@
-package vidVox.workers;
+package vidivox.workers;
 
 
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import vidVox.guiScreens.MainPlayerScreen;
+import vidivox.guiscreens.MainPlayerScreen;
 //
 //Skip class using swing worker which is used to allow fast forward and rewinding.
 public class Skip extends SwingWorker<Void,Integer>{

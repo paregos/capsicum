@@ -1,4 +1,4 @@
-package vidVox.guiScreens;
+package vidivox.guiscreens;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import vidVox.workers.OverlayMp3OntoVideo;
+import vidivox.workers.OverlayMp3OntoVideo;
 
 public class AddCommentaryScreen extends JFrame{
 

@@ -1,4 +1,4 @@
-package vidVox.guiScreens.panes;
+package vidivox.guiscreens.panes;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,9 +21,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import vidVox.guiScreens.MainPlayerScreen;
-import vidVox.guiScreens.TextToMp3Screen;
-import vidVox.workers.OverlayMp3OntoVideo;
+import vidivox.guiscreens.MainPlayerScreen;
+import vidivox.guiscreens.TextToMp3Screen;
+import vidivox.workers.OverlayMp3OntoVideo;
 
 public class CommentaryPane extends JPanel {
 
@@ -194,10 +194,9 @@ public class CommentaryPane extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 		
-			try{
-			audioOverlayTable.removeRow(table2.getSelectedRow());
-			}catch (Exception e2){
-				JOptionPane.showMessageDialog(null, "Error please select a row before trying to remove");	
+			int rowsSeclected = table2.getSelectedRows().length;
+			for (int i = 0; i < rowsSeclected; i++){
+				audioOverlayTable.removeRow(table2.getSelectedRow());
 			}
 			
 			}
@@ -265,6 +264,15 @@ public class CommentaryPane extends JPanel {
 						"kkona", true);
 				k.execute();
 
+			}
+		});
+		
+		// Allows the user to create commentary.
+		createCommentary1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				MainPlayerScreen.createCommentaryScreen.setVisible(true);
 			}
 		});
 	}

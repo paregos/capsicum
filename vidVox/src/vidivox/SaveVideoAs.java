@@ -1,4 +1,4 @@
-package vidVox;
+package vidivox;
 
 
 import java.io.File;
@@ -8,9 +8,9 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import vidVox.guiScreens.MainPlayerScreen;
-import vidVox.guiScreens.SaveDialogScreen;
-import vidVox.workers.MoveVideoFile;
+import vidivox.guiscreens.MainPlayerScreen;
+import vidivox.guiscreens.SaveDialogScreen;
+import vidivox.workers.MoveVideoFile;
 
 public class SaveVideoAs {
 

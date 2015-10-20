@@ -1,4 +1,4 @@
-package vidVox.guiScreens;
+package vidivox.guiscreens;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;

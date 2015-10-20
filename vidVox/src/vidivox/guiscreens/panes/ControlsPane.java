@@ -1,4 +1,4 @@
-package vidVox.guiScreens.panes;
+package vidivox.guiscreens.panes;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,8 +16,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
-import vidVox.guiScreens.MainPlayerScreen;
-import vidVox.workers.Skip;
+import vidivox.guiscreens.MainPlayerScreen;
+import vidivox.workers.Skip;
 
 public class ControlsPane extends JPanel{
 	
@@ -95,27 +95,11 @@ public class ControlsPane extends JPanel{
 				c = new GridBagConstraints();
 				c.gridx = 6;
 				c.gridy = 0;
-				c.weightx = 0;
+				c.weightx = 1;
 				c.weighty = 1;
+				c.fill = GridBagConstraints.HORIZONTAL;
 				c.insets = new Insets(0, 10, 0, 10);
 				this.add(volume, c);
-
-				// adding empty jlabels to the control panel to space out the buttons
-				// nicely
-				JLabel one = new JLabel();
-				c = new GridBagConstraints();
-				c.gridx = 0;
-				c.gridy = 0;
-				c.weightx = 1;
-				c.weighty = 1;
-				this.add(one, c);
-				JLabel two = new JLabel();
-				c = new GridBagConstraints();
-				c.gridx = 4;
-				c.gridy = 0;
-				c.weightx = 1;
-				c.weighty = 1;
-				this.add(two, c);
 		
 	}
 	

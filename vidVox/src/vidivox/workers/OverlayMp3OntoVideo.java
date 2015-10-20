@@ -1,12 +1,12 @@
-package vidVox.workers;
+package vidivox.workers;
 
 
 import java.io.IOException;
 
 import javax.swing.SwingWorker;
 
-import vidVox.guiScreens.MainPlayerScreen;
-import vidVox.guiScreens.TextToMp3Screen;
+import vidivox.guiscreens.MainPlayerScreen;
+import vidivox.guiscreens.TextToMp3Screen;
 
 public class OverlayMp3OntoVideo extends SwingWorker<Void, String>{
 	//Fields used for my class.

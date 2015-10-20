@@ -1,4 +1,4 @@
-package vidVox.workers;
+package vidivox.workers;
 
 import java.io.IOException;
 

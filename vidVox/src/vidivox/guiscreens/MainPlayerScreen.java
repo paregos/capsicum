@@ -1,4 +1,4 @@
-package vidVox.guiScreens;
+package vidivox.guiscreens;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -40,14 +40,14 @@ import javax.swing.table.DefaultTableModel;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
-import vidVox.OpenVideo;
-import vidVox.SaveVideoAs;
-import vidVox.guiScreens.panes.CommentaryPane;
-import vidVox.guiScreens.panes.ControlsPane;
-import vidVox.guiScreens.panes.EffectsPane;
-import vidVox.workers.MoveVideoFile;
-import vidVox.workers.OverlayMp3OntoVideo;
-import vidVox.workers.Skip;
+import vidivox.OpenVideo;
+import vidivox.SaveVideoAs;
+import vidivox.guiscreens.panes.CommentaryPane;
+import vidivox.guiscreens.panes.ControlsPane;
+import vidivox.guiscreens.panes.EffectsPane;
+import vidivox.workers.MoveVideoFile;
+import vidivox.workers.OverlayMp3OntoVideo;
+import vidivox.workers.Skip;
 
 public class MainPlayerScreen extends JFrame {
 	// Fields which are used within this class and package.
@@ -98,12 +98,12 @@ public class MainPlayerScreen extends JFrame {
 	public static void main(String[] args) {
 		// Initialising all the screens which will be used in the video player.
 		MainPlayerScreen frame = new MainPlayerScreen();
-		frame.setBounds(125, 200, 1400, 610);
-		frame.setMinimumSize(new Dimension(1400, 610));
+		frame.setBounds(125, 200, 1300, 610);
+		frame.setMinimumSize(new Dimension(1300, 610));
 		frame.setVisible(true);
 		createCommentaryScreen = new TextToMp3Screen(frame);
-		createCommentaryScreen.setBounds(385, 475, 650, 100);
-		createCommentaryScreen.setMinimumSize(new Dimension(650, 100));
+		createCommentaryScreen.setBounds(385, 475, 650, 125);
+		createCommentaryScreen.setMinimumSize(new Dimension(650, 125));
 		loadingScreen.setBounds(510, 495, 400, 60);
 		loadingScreen.setMinimumSize(new Dimension(400, 60));
 		addCommentaryScreen = new AddCommentaryScreen();
@@ -412,18 +412,6 @@ public class MainPlayerScreen extends JFrame {
 		saveVideoAs = new JMenuItem("Save Video as...");
 		video.add(saveVideoAs);
 
-		// audio menu tab
-		audio = new JMenu("Audio");
-		menuBar.add(audio);
-
-		// create commentary button
-		createCommentary = new JMenuItem("Create Commentary");
-		audio.add(createCommentary);
-
-		// add commentary button
-		addCommentary = new JMenuItem("Add Commentary");
-		audio.add(addCommentary);
-
 		// Adding in the video area where a mp4 can be played
 		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
 		//mediaPlayerComponent.setPreferredSize(new Dimension(1300, 480));
@@ -468,29 +456,6 @@ public class MainPlayerScreen extends JFrame {
 					// If user decided to cancel the operation, it will continue
 					// playing the video if it is being played.
 					mediaPlayerComponent.getMediaPlayer().play();
-				}
-			}
-		});
-
-		// Allows the user to create commentary.
-		createCommentary.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				createCommentaryScreen.setVisible(true);
-			}
-		});
-
-		// Allows the user to add commentary.
-		addCommentary.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (MainPlayerScreen.mediapath == null) {
-					JOptionPane
-							.showMessageDialog(null,
-									"Error please open a video before trying to add commentary");
-				} else {
-					addCommentaryScreen.setVisible(true);
 				}
 			}
 		});

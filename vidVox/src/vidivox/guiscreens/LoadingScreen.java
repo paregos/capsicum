@@ -1,4 +1,4 @@
-package vidVox.guiScreens;
+package vidivox.guiscreens;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

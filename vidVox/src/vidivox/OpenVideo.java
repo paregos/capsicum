@@ -1,4 +1,4 @@
-package vidVox;
+package vidivox;
 
 import java.io.File;
 
@@ -6,7 +6,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import vidVox.guiScreens.TextToMp3Screen;
+import vidivox.guiscreens.TextToMp3Screen;
 
 public class OpenVideo {
 	//This will choose my file and also a variable for my media path.
