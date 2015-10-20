@@ -10,6 +10,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import vidVox.guiScreens.MainPlayerScreen;
 import vidVox.guiScreens.SaveDialogScreen;
+import vidVox.workers.MoveVideoFile;
 
 public class SaveVideoAs {
 
