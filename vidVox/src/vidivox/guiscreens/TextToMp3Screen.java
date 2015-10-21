@@ -1,5 +1,6 @@
 package vidivox.guiscreens;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -29,9 +30,11 @@ public class TextToMp3Screen extends JFrame {
 	private JComboBox voiceChooser;
 	private GridBagLayout gbl_timer;
 	public static int videoNumber =0;
+	private String offset;
 	public static String originalVideo;
 	public static MainPlayerScreen mainPlayerScreen;
-
+	private int textNumber =0;
+	
 
 	public TextToMp3Screen (MainPlayerScreen mainPlayerScreen) {
 
@@ -39,7 +42,7 @@ public class TextToMp3Screen extends JFrame {
 		this.mainPlayerScreen = mainPlayerScreen;
 
 		//making the main initial layout for the textToMp3Screen
-		setBounds(300, 300, 650, 125);
+		setBounds(300, 300, 650, 150);
 		setTitle("Enter text between 1-75 characters");
 		GridBagConstraints c = new GridBagConstraints();		
 
@@ -133,6 +136,7 @@ public class TextToMp3Screen extends JFrame {
 
 		//creating the text box which will store the hours
 		textbox1 = new JTextField("00");
+		textbox1.setPreferredSize(new Dimension(42, 25));
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
@@ -143,6 +147,7 @@ public class TextToMp3Screen extends JFrame {
 		
 		// creating the text box which will store the minutes
 		textbox2 = new JTextField("00");
+		textbox2.setPreferredSize(new Dimension(42, 25));
 		c = new GridBagConstraints();
 		c.gridx = 2;
 		c.gridy = 0;
@@ -153,6 +158,7 @@ public class TextToMp3Screen extends JFrame {
 
 		// creating the text box which will store the time seconds
 		textbox3 = new JTextField("00");
+		textbox3.setPreferredSize(new Dimension(42, 25));
 		c = new GridBagConstraints();
 		c.gridx = 4;
 		c.gridy = 0;
@@ -233,7 +239,7 @@ public class TextToMp3Screen extends JFrame {
 						mediaPath=ourFile.getAbsolutePath();
 
 						//creates the mp3 file at the location
-						TextToFile k = new TextToFile(textbox.getText(), mediaPath, false);
+						TextToFile k = new TextToFile(textbox.getText(), mediaPath, false, textNumber, "00:00:00");
 						k.execute();
 					}
 				}
@@ -252,11 +258,12 @@ public class TextToMp3Screen extends JFrame {
 				}else if (textbox.getText().trim().equals("")){
 					JOptionPane.showMessageDialog(null, "Error please enter some characters, not only spaces");
 				}else{
-
+					offset = textbox1.getText()+":"+textbox2.getText()+":"+textbox3.getText();
 					//creates a mp3 file, places it in tmp and overlays the audio
-					String path = "/tmp/"+textbox.getText();
-					TextToFile k = new TextToFile(textbox.getText(), path, true);
+					String path = "/tmp/iop"+textNumber;
+					TextToFile k = new TextToFile(textbox.getText(), path, true, textNumber, offset);
 					k.execute();
+					textNumber++;
 				}
 			}
 		});

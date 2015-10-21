@@ -102,8 +102,8 @@ public class MainPlayerScreen extends JFrame {
 		frame.setMinimumSize(new Dimension(1300, 610));
 		frame.setVisible(true);
 		createCommentaryScreen = new TextToMp3Screen(frame);
-		createCommentaryScreen.setBounds(385, 475, 650, 125);
-		createCommentaryScreen.setMinimumSize(new Dimension(650, 125));
+		createCommentaryScreen.setBounds(385, 475, 650, 150);
+		createCommentaryScreen.setMinimumSize(new Dimension(650, 150));
 		loadingScreen.setBounds(510, 495, 400, 60);
 		loadingScreen.setMinimumSize(new Dimension(400, 60));
 		addCommentaryScreen = new AddCommentaryScreen();

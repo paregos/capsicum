@@ -29,7 +29,7 @@ public class CommentaryPane extends JPanel {
 
 	public static JButton createCommentary1, removeCommentary, mergeCommentary, addCommentary1, fxMenu;
 	private GridBagConstraints c;
-	DefaultTableModel audioOverlayTable = null;
+	public static DefaultTableModel audioOverlayTable = null;
 	public JTable table2;
 	private JSeparator separator;
 	
