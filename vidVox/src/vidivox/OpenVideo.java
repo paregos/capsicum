@@ -3,6 +3,7 @@ package vidivox;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -28,7 +29,12 @@ public class OpenVideo {
 			//Get selected file.
 			ourFile=ourFileSelector.getSelectedFile();
 			mediaPath=ourFile.getAbsolutePath();
+			if(!ourFile.exists() ){
+				JOptionPane.showMessageDialog(null, "Please select a valid mp4 or avi video"); 
+				return false;
+				} else{
 			TextToMp3Screen.originalVideo = mediaPath;
+				}
 			return true;
 		} else {
 			//Returns false if they chose to cancel.
