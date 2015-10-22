@@ -8,7 +8,6 @@ import vidivox.guiscreens.MainPlayerScreen;
 import vidivox.guiscreens.panes.CommentaryPane;
 
 public class WavToMp3 extends SwingWorker<Void, String>{
-	//
 	//location = location of where the mp3 will be saved
 	//filename = what the file is called
 	private String location;
@@ -53,9 +52,10 @@ public class WavToMp3 extends SwingWorker<Void, String>{
 		//if this mp3 needs to be overlayed
 		if (overlay){
 			
-			Object[] data = { location, text, "0",
-					offset, true };
-			CommentaryPane.audioOverlayTable.addRow(data);
+			DurationGetter k = new DurationGetter(this.location, this.text, this.overlay, this.textNumber, this.offset);
+			k.execute();
+			
+
 			
 			// do the overlay 
 
