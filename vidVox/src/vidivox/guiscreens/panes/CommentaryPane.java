@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 
 import vidivox.guiscreens.MainPlayerScreen;
 import vidivox.guiscreens.TextToMp3Screen;
+import vidivox.workers.DurationGetter;
 import vidivox.workers.OverlayMp3OntoVideo;
 
 public class CommentaryPane extends JPanel {
@@ -123,7 +124,7 @@ public class CommentaryPane extends JPanel {
 
 		// Creating a table which will hold all of the information relating to
 		// commentaries being added
-		String[] audioOverlayOptions = { "Full name", "Commentary File Name",
+		String[] audioOverlayOptions = { "Full name", "Commentary",
 				"Duration", "Time inserted", "Include?" };
 		audioOverlayTable = new DefaultTableModel(audioOverlayOptions, 0) {
 			// Code from
@@ -232,9 +233,9 @@ public class CommentaryPane extends JPanel {
 				if (!(ourFileSelector.getSelectedFile() == null)) {
 					ourFile = ourFileSelector.getSelectedFile();
 					mediaPath = ourFile.getAbsolutePath();
-					Object[] data = { mediaPath, ourFile.getName(), "0",
-							MainPlayerScreen.timeLabel.getText(), true };
-					audioOverlayTable.addRow(data);
+					
+					DurationGetter k = new DurationGetter(mediaPath, ourFile.getName(), true, 50, 	MainPlayerScreen.timeLabel.getText());
+					k.execute();
 				}
 			}
 		});

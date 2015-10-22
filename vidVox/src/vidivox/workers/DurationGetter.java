@@ -55,6 +55,7 @@ public class DurationGetter extends SwingWorker<Void, String>{
 	
 		Object[] data = { location, text, duration, offset, true };
 		CommentaryPane.audioOverlayTable.addRow(data);
+	
 		
 	}
 

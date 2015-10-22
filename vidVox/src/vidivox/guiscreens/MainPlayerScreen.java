@@ -57,7 +57,6 @@ public class MainPlayerScreen extends JFrame {
 	public static Skip ffswing, rwswing;
 	public static String mediapath;
 	public static LoadingScreen loadingScreen = new LoadingScreen();
-	public static AddCommentaryScreen addCommentaryScreen;
 	private boolean pressedWhilePlaying = false;
 	public static TextToMp3Screen createCommentaryScreen;
 	public static int currentVolume;
@@ -106,9 +105,6 @@ public class MainPlayerScreen extends JFrame {
 		createCommentaryScreen.setMinimumSize(new Dimension(650, 150));
 		loadingScreen.setBounds(510, 495, 400, 60);
 		loadingScreen.setMinimumSize(new Dimension(400, 60));
-		addCommentaryScreen = new AddCommentaryScreen();
-		addCommentaryScreen.setBounds(285, 475, 850, 100);
-		addCommentaryScreen.setMinimumSize(new Dimension(650, 100));
 	}
 
 	/**
