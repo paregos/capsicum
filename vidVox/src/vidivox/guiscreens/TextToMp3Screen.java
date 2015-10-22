@@ -259,16 +259,37 @@ public class TextToMp3Screen extends JFrame {
 					JOptionPane.showMessageDialog(null, "Error please enter some characters, not only spaces");
 				}else{
 					offset = textbox1.getText()+":"+textbox2.getText()+":"+textbox3.getText();
+					if(checkNumbersOnly(offset)){
 					//creates a mp3 file, places it in tmp and overlays the audio
 					String path = "/tmp/iop"+textNumber;
 					TextToFile k = new TextToFile(textbox.getText(), path, true, textNumber, offset);
 					k.execute();
 					textNumber++;
+					}else{
+						JOptionPane.showMessageDialog(null, "Time must be in the format HH:MM:SS");
+					}
 				}
 			}
 		});
 
 
+	}
+	
+	public boolean checkNumbersOnly(String time) {
+		
+		boolean valid = false;
+		String [] times = time.split(":");
+		for (int i = 0; i<times.length; i++){
+		valid= times[i].matches("[0-9]+");
+		if ((valid) && (times[i].length() == 2)) {
+			valid = true;
+		} else {
+			return false;
+		}
+		
+		}
+		
+		return valid;
 	}
 
 }

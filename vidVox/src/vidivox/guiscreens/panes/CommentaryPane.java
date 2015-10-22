@@ -150,7 +150,18 @@ public class CommentaryPane extends JPanel {
 				}
 				return columnType;
 			}
+			
+			public boolean isCellEditable(int row, int column) {
+				switch (column){
+				case 4:
+					return true;
+				}
+		        return false;
+		    }
+			
 		};
+		
+		
 		table2 = new JTable(audioOverlayTable);
 		table2.setModel(audioOverlayTable);
 		table2.removeColumn(table2.getColumnModel().getColumn(0));
@@ -240,14 +251,9 @@ public class CommentaryPane extends JPanel {
 
 						String timeToAdd = (String) table2.getValueAt(i, 2);
 						String[] timeValues = timeToAdd.split(":");
-						int timeInSeconds = Integer.parseInt(timeValues[0])
-								* 3600 + Integer.parseInt(timeValues[1]) * 60
-								+ Integer.parseInt(timeValues[2]);
+						int timeInSeconds = Integer.parseInt(timeValues[0])* 3600 + Integer.parseInt(timeValues[1]) * 60+ Integer.parseInt(timeValues[2]);
 
-						command = command + "-itsoffset " + timeInSeconds
-								+ " -i "
-								+ (String) table2.getModel().getValueAt(i, 0)
-								+ " ";
+						command = command + "-itsoffset " + timeInSeconds+ " -i "+ (String) table2.getModel().getValueAt(i, 0)+ " ";
 						numberOfAudio++;
 					}
 				}
@@ -256,12 +262,8 @@ public class CommentaryPane extends JPanel {
 				for (int k = 1; k < numberOfAudio; k++) {
 					command = command + "-map " + k + ":0 ";
 				}
-				command = command
-						+ "-c:v copy -async 1 -filter_complex amix=inputs="
-						+ numberOfAudio + " ";
-
-				OverlayMp3OntoVideo k = new OverlayMp3OntoVideo(command,
-						"kkona", true);
+				command = command+ "-c:v copy -async 1 -filter_complex amix=inputs="+ numberOfAudio + " ";
+				OverlayMp3OntoVideo k = new OverlayMp3OntoVideo(command, "kkona", true);
 				k.execute();
 
 			}
