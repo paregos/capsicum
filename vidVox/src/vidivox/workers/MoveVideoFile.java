@@ -2,6 +2,7 @@ package vidivox.workers;
 
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 public class MoveVideoFile extends SwingWorker<Void, String>{
@@ -32,4 +33,8 @@ public class MoveVideoFile extends SwingWorker<Void, String>{
 		this.location = location;
 	}
 
+	protected void done(){
+		JOptionPane.showMessageDialog(null, "Successfully saved video to: " + location);
+	}
+	
 }

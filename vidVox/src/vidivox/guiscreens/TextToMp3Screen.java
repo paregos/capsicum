@@ -20,7 +20,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import vidivox.workers.PreviewTextSpeech;
-import vidivox.workers.TextToFile;
+import vidivox.workers.filecreation.TextToFile;
 
 
 public class TextToMp3Screen extends JFrame {

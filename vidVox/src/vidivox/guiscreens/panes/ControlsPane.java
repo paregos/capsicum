@@ -46,6 +46,7 @@ public class ControlsPane extends JPanel{
 				c.insets = new Insets(0, 5, 0, 10);
 				// c.anchor = GridBagConstraints.EAST;
 				this.add(fastforward, c);
+				fastforward.setEnabled(false);
 
 				// JButton which fast forwards through the video
 				rewind = new JButton("<<");
@@ -57,6 +58,7 @@ public class ControlsPane extends JPanel{
 				c.insets = new Insets(0, 10, 0, 5);
 				// c.anchor = GridBagConstraints.WEST;
 				this.add(rewind, c);
+				rewind.setEnabled(false);
 
 				// JButton which Plays the video
 				play = new JButton("pause");
@@ -67,6 +69,7 @@ public class ControlsPane extends JPanel{
 				c.weighty = 1;
 				c.insets = new Insets(0, 5, 0, 5);
 				this.add(play, c);
+				play.setEnabled(false);
 
 				// Volume label
 				volumeLabel = new JLabel("Volume");
@@ -89,6 +92,7 @@ public class ControlsPane extends JPanel{
 				c.insets = new Insets(0, 10, 0, 10);
 				c.anchor = GridBagConstraints.EAST;
 				this.add(mute, c);
+				mute.setEnabled(false);
 
 				// JSlider which controls the volume of the video
 				volume = new JSlider();

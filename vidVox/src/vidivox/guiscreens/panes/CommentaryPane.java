@@ -56,6 +56,7 @@ public class CommentaryPane extends JPanel {
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(createCommentary1, c);
+		createCommentary1.setEnabled(false);
 
 		// JButton which add selected Commentary to the video
 		mergeCommentary = new JButton("Merge selected commentary to video");
@@ -69,6 +70,7 @@ public class CommentaryPane extends JPanel {
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(mergeCommentary, c);
+		mergeCommentary.setEnabled(false);
 		
 		// JButton which add selected Commentary to the video
 		removeCommentary = new JButton("Remove selected commentary from list");
@@ -82,7 +84,8 @@ public class CommentaryPane extends JPanel {
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(removeCommentary, c);
-
+		removeCommentary.setEnabled(false);
+		
 		// JButton which adds Commentary to the list
 		addCommentary1 = new JButton("Select Mp3 Commentary to add at "+ MainPlayerScreen.timeLabel.getText());
 		c = new GridBagConstraints();
@@ -95,6 +98,7 @@ public class CommentaryPane extends JPanel {
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(addCommentary1, c);
+		addCommentary1.setEnabled(false);
 		
 		// JButton which opens the special fx menu
 		fxMenu = new JButton("Open special video effects tab");
@@ -108,6 +112,7 @@ public class CommentaryPane extends JPanel {
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(fxMenu, c);
+		fxMenu.setEnabled(false);
 		
 		// JSeperator which adds Commentary to the list
 		separator = new JSeparator();
@@ -198,6 +203,7 @@ public class CommentaryPane extends JPanel {
 					fxMenu.setText("Close special video effects tab");
 				}
 				
+				repaint();
 			}
 		});
 		
@@ -244,6 +250,7 @@ public class CommentaryPane extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
+				if (table2.getModel().getRowCount() != 0){
 				int numberOfAudio = 1;
 				String command = "ffmpeg -y -i \""+ TextToMp3Screen.originalVideo + "\" ";
 
@@ -254,7 +261,7 @@ public class CommentaryPane extends JPanel {
 						String[] timeValues = timeToAdd.split(":");
 						int timeInSeconds = Integer.parseInt(timeValues[0])* 3600 + Integer.parseInt(timeValues[1]) * 60+ Integer.parseInt(timeValues[2]);
 
-						command = command + "-itsoffset " + timeInSeconds+ " -i "+ (String) table2.getModel().getValueAt(i, 0)+ " ";
+						command = command + "-itsoffset " + timeInSeconds+ " -i \""+ (String) table2.getModel().getValueAt(i, 0)+ "\" ";
 						numberOfAudio++;
 					}
 				}
@@ -267,6 +274,7 @@ public class CommentaryPane extends JPanel {
 				OverlayMp3OntoVideo k = new OverlayMp3OntoVideo(command, "kkona", true);
 				k.execute();
 
+			}
 			}
 		});
 		

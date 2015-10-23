@@ -40,18 +40,17 @@ import javax.swing.table.DefaultTableModel;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
-import vidivox.OpenVideo;
-import vidivox.SaveVideoAs;
 import vidivox.guiscreens.panes.CommentaryPane;
 import vidivox.guiscreens.panes.ControlsPane;
 import vidivox.guiscreens.panes.EffectsPane;
+import vidivox.inputoutput.OpenVideo;
+import vidivox.inputoutput.SaveVideoAs;
 import vidivox.workers.MoveVideoFile;
 import vidivox.workers.OverlayMp3OntoVideo;
 import vidivox.workers.Skip;
 
 public class MainPlayerScreen extends JFrame {
 	// Fields which are used within this class and package.
-	MainPlayerScreen mainplayer = this;
 	public static JPanel topPane, bottomPane,leftPane, effectsPane, rightPane;
 	public static EmbeddedMediaPlayerComponent mediaPlayerComponent;
 	public static Skip ffswing, rwswing;
@@ -86,32 +85,16 @@ public class MainPlayerScreen extends JFrame {
 	JMenuItem openVideo, saveVideo, saveVideoAs, addCommentary,
 			createCommentary;
 
-	/**
-	 * Main Method used to start my application. Also used some code from
-	 * https:/
-	 * /github.com/caprica/vlcj/blob/master/src/test/java/uk/co/caprica/vlcj
-	 * /test/basic/PlayerControlsPanel.java for additional features.
-	 * 
-	 * @param args
+	/*
+	 *  The following methods used a number of segments of code from the following for additional features.
+	 * https://github.com/caprica/vlcj/blob/master/src/test/java/uk/co/caprica/vlcj/test/basic/PlayerControlsPanel.java
 	 */
-	public static void main(String[] args) {
-		// Initialising all the screens which will be used in the video player.
-		MainPlayerScreen frame = new MainPlayerScreen();
-		frame.setBounds(125, 200, 1300, 610);
-		frame.setMinimumSize(new Dimension(1300, 610));
-		frame.setVisible(true);
-		createCommentaryScreen = new TextToMp3Screen(frame);
-		createCommentaryScreen.setBounds(385, 475, 650, 150);
-		createCommentaryScreen.setMinimumSize(new Dimension(650, 150));
-		loadingScreen.setBounds(510, 495, 400, 60);
-		loadingScreen.setMinimumSize(new Dimension(400, 60));
-	}
-
+	
 	/**
-	 * Constructor for my class.
+	 * Constructor for the main gui screen.
 	 */
 	public MainPlayerScreen() {
-
+		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				if (!(mediapath == TextToMp3Screen.originalVideo)) {
@@ -434,7 +417,7 @@ public class MainPlayerScreen extends JFrame {
 				// Pauses the current video being played if any.
 				mediaPlayerComponent.getMediaPlayer().setPause(true);
 				// Check if the user grabbed a file.
-				boolean openfile = OpenVideo.grabFile();
+				boolean openfile = OpenVideo.grabFile(MainPlayerScreen.this);
 				if (openfile) {
 					mediapath = OpenVideo.mediaPath;
 					if (ff == true) {
