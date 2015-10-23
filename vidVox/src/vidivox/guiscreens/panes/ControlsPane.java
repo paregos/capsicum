@@ -158,12 +158,12 @@ public class ControlsPane extends JPanel{
 							MainPlayerScreen.rwswing = new Skip(MainPlayerScreen.mediaPlayerComponent, -1000, mainplayer);
 							MainPlayerScreen.rwswing.skip = true;
 							MainPlayerScreen.rwswing.execute();
-							MainPlayerScreen.	rw = true;
+							MainPlayerScreen.rw = true;
 							// Press rewind button while rewinding and not fast
 							// forwarding will cause rewind
 							// to be canceled.
 						} else if ((MainPlayerScreen.rw == true) && (MainPlayerScreen.ff == false)) {
-							MainPlayerScreen.	rwswing.cancel(true);
+							MainPlayerScreen.rwswing.cancel(true);
 							MainPlayerScreen.rw = false;
 							// Will pause the component if rewind is canceled and it was
 							// paused when rewinding.

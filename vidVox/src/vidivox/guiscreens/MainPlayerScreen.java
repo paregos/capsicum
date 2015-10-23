@@ -43,6 +43,7 @@ import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import vidivox.guiscreens.panes.CommentaryPane;
 import vidivox.guiscreens.panes.ControlsPane;
 import vidivox.guiscreens.panes.EffectsPane;
+import vidivox.guiscreens.panes.VideoMenuBar;
 import vidivox.inputoutput.OpenVideo;
 import vidivox.inputoutput.SaveVideoAs;
 import vidivox.workers.MoveVideoFile;
@@ -65,25 +66,18 @@ public class MainPlayerScreen extends JFrame {
 	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
 	// Set up the GridBag Layout for my screen.
-	GridBagLayout gbl_topPane;
-	GridBagLayout gbl_leftPane;
-	GridBagLayout gbl_bottomPane;
-	GridBagLayout gbl_rightPane;
-	GridBagLayout gbl_effects;
+	GridBagLayout gbl_topPane, gbl_effects, gbl_leftPane, gbl_bottomPane, gbl_rightPane;
 	GridBagConstraints c;
 
 	// Buttons, sliders and labels which are used in my GUI for users to click.
-
 	public JSlider positionSlider;
 	public static JLabel endLabel;
 	public static JLabel timeLabel = new JLabel("00:00:00");
 	
-
 	// Menu at the top which allows users to select their appropriate options.
 	JMenuBar menuBar;
 	JMenu video, audio;
-	JMenuItem openVideo, saveVideo, saveVideoAs, addCommentary,
-			createCommentary;
+	JMenuItem openVideo, saveVideo, saveVideoAs, addCommentary,createCommentary;
 
 	/*
 	 *  The following methods used a number of segments of code from the following for additional features.
@@ -98,22 +92,13 @@ public class MainPlayerScreen extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				if (!(mediapath == TextToMp3Screen.originalVideo)) {
-					Object[] options = { "Save", "Save as..",
-							"Exit without saving" };
-					int choice = JOptionPane.showOptionDialog(null,
-							"Save changes to your video before closing?",
-							"Warning video has changes which are not saved",
-							JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE, null, options,
-							options[0]);
+					Object[] options = { "Save", "Save as..","Exit without saving" };
+					int choice = JOptionPane.showOptionDialog(null,"Save changes to your video before closing?","Warning video has changes which are not saved",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE, null, options,options[0]);
 					if (choice == 0) {
 						if (MainPlayerScreen.mediapath == null) {
-							JOptionPane
-									.showMessageDialog(null,
-											"error please open a video before trying to save");
+							JOptionPane.showMessageDialog(null,"error please open a video before trying to save");
 						} else {
-							MoveVideoFile k = new MoveVideoFile(mediapath,
-									TextToMp3Screen.originalVideo);
+							MoveVideoFile k = new MoveVideoFile(mediapath,TextToMp3Screen.originalVideo);
 							k.execute();
 						}
 					} else if (choice == 1) {
@@ -374,22 +359,8 @@ public class MainPlayerScreen extends JFrame {
 		c = new GridBagConstraints();
 		setJMenuBar(menuBar);
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-
-		// adds a menu to the menu bar
-		video = new JMenu("Video");
-		menuBar.add(video);
-
-		// open video button
-		openVideo = new JMenuItem("Open Video...");
-		video.add(openVideo);
-
-		// save video button
-		saveVideo = new JMenuItem("Save Video...");
-		video.add(saveVideo);
-
-		// save video as button
-		saveVideoAs = new JMenuItem("Save Video as...");
-		video.add(saveVideoAs);
+		VideoMenuBar videomenu = new VideoMenuBar(this);
+		videomenu.setMenu(menuBar);
 
 		// Adding in the video area where a mp4 can be played
 		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
@@ -409,60 +380,6 @@ public class MainPlayerScreen extends JFrame {
 	}
 
 	public void setUpListeners() {
-		
-		// This will allow you to choose a file and play it.
-		openVideo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Pauses the current video being played if any.
-				mediaPlayerComponent.getMediaPlayer().setPause(true);
-				// Check if the user grabbed a file.
-				boolean openfile = OpenVideo.grabFile(MainPlayerScreen.this);
-				if (openfile) {
-					mediapath = OpenVideo.mediaPath;
-					if (ff == true) {
-						ffswing.cancel(true);
-					}
-					if (rw == true) {
-						rwswing.cancel(true);
-					}
-					ff = false;
-					rw = false;
-					ControlsPane.play.setText("pause");
-					run();
-				}
-				if (ControlsPane.play.getText().equals("pause")) {
-					// If user decided to cancel the operation, it will continue
-					// playing the video if it is being played.
-					mediaPlayerComponent.getMediaPlayer().play();
-				}
-			}
-		});
-
-		// Allows the user to save video.
-		saveVideo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (MainPlayerScreen.mediapath == null) {
-					JOptionPane.showMessageDialog(null,
-							"Error please open a video before trying to sav e.");
-				} else {
-					MoveVideoFile k = new MoveVideoFile(mediapath,
-							TextToMp3Screen.originalVideo);
-					k.execute();
-				}
-			}
-		});
-
-		// Allows the user to save Video as.
-		saveVideoAs.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Uses the method saveVideoAs which will allow you to save the
-				// video into a location the user wants.
-				SaveVideoAs.saveVideoAs();
-			}
-		});
 
 		// This is a change listener used to look at the changes when the video
 		// is being played and mainly used to
@@ -518,6 +435,5 @@ public class MainPlayerScreen extends JFrame {
 						ControlsPane.play.setText("play");
 					}
 				});
-
 	}
 }
