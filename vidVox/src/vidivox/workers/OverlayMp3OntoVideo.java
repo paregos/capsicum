@@ -21,7 +21,7 @@ public class OverlayMp3OntoVideo extends SwingWorker<Void, String>{
 
 		//This will overlay MP3 onto video
 		TextToMp3Screen.mainPlayerScreen.loadingScreen.setVisible(true);
-		String cmd = command+"\"/tmp/V"+filename+TextToMp3Screen.videoNumber+".mp4"+"\"";
+		String cmd = command+"\"/tmp/V"+filename+TextToMp3Screen.videoNumber+".mp4"+"\" -ac 2";
 		ProcessBuilder x = new ProcessBuilder("/bin/bash", "-c", cmd );
 
 		System.out.println(cmd);
