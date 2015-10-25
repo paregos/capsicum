@@ -18,9 +18,9 @@ public class VideoMenuBar {
 
 	// Menu at the top which allows users to select their appropriate options.
 	
-	JMenu video;
-	JMenuItem openVideo, saveVideo, saveVideoAs;
-	MainPlayerScreen mainScreen;
+	private JMenu video;
+	private JMenuItem openVideo, saveVideo, saveVideoAs;
+	private MainPlayerScreen mainScreen;
 	
 	public VideoMenuBar(MainPlayerScreen mainScreen){
 		this.mainScreen = mainScreen;
@@ -56,19 +56,19 @@ public class VideoMenuBar {
 					// Check if the user grabbed a file.
 					boolean openfile = OpenVideo.grabFile(mainScreen);
 					if (openfile) {
-						mainScreen.mediapath = OpenVideo.mediaPath;
-						if (mainScreen.ff == true) {
-							mainScreen.ffswing.cancel(true);
+						mainScreen.setMediapath(OpenVideo.getMediaPath());
+						if (mainScreen.isFf() == true) {
+							mainScreen.getFfswing().cancel(true);
 						}
-						if (mainScreen.rw == true) {
-							mainScreen.rwswing.cancel(true);
+						if (mainScreen.isRw() == true) {
+							mainScreen.getRwswing().cancel(true);
 						}
-						mainScreen.ff = false;
-						mainScreen.rw = false;
-						ControlsPane.play.setText("pause");
+						mainScreen.setFf(false);
+						mainScreen.setRw(false);
+						ControlsPane.play.setText("Pause");
 						mainScreen.run();
 					}
-					if (ControlsPane.play.getText().equals("pause")) {
+					if (ControlsPane.play.getText().equals("Pause")) {
 						// If user decided to cancel the operation, it will continue
 						// playing the video if it is being played.
 						mainScreen.mediaPlayerComponent.getMediaPlayer().play();
@@ -80,11 +80,11 @@ public class VideoMenuBar {
 			saveVideo.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (MainPlayerScreen.mediapath == null) {
+					if (MainPlayerScreen.getMediapath() == null) {
 						JOptionPane.showMessageDialog(null,
 								"Error please open a video before trying to save.");
 					} else {
-						MoveVideoFile k = new MoveVideoFile(mainScreen.mediapath,
+						MoveVideoFile k = new MoveVideoFile(mainScreen.getMediapath(),
 								TextToMp3Screen.originalVideo);
 						k.execute();
 					}
@@ -95,7 +95,7 @@ public class VideoMenuBar {
 			saveVideoAs.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (MainPlayerScreen.mediapath == null) {
+					if (MainPlayerScreen.getMediapath() == null) {
 						JOptionPane.showMessageDialog(null,
 								"Error please open a video before trying to save.");
 					} else {

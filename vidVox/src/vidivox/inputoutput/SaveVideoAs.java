@@ -24,14 +24,14 @@ public class SaveVideoAs {
 		
 		
 		//opening the save file explorer, user gets to choose where to save the file   
-		if (MainPlayerScreen.mediapath == null){
+		if (MainPlayerScreen.getMediapath() == null){
 			JOptionPane.showMessageDialog(null, "error please open a video before trying to save");
 		}else{
 			//adding a file filter for saving as mp4 and avi
 			FileFilter filter = new FileNameExtensionFilter("MP4 & AVI","mp4","avi");
 			SaveDialogScreen.ourFileSelector.resetChoosableFileFilters();
 			SaveDialogScreen.ourFileSelector.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			SaveDialogScreen.ourFileSelector.setSelectedFile(new File(OpenVideo.ourFileSelector.getSelectedFile().getName()));	
+			SaveDialogScreen.ourFileSelector.setSelectedFile(new File(OpenVideo.getOurFileSelector().getSelectedFile().getName()));	
 			SaveDialogScreen.ourFileSelector.setFileFilter(filter);
 			//SaveDialogScreen.ourFileSelector.showSaveDialog(null);    
 			
@@ -46,7 +46,7 @@ public class SaveVideoAs {
 					mediaPath1 = mediaPath1+".mp4";
 				}
 
-				MoveVideoFile k = new MoveVideoFile(MainPlayerScreen.mediapath, mediaPath1);
+				MoveVideoFile k = new MoveVideoFile(MainPlayerScreen.getMediapath(), mediaPath1);
 				k.execute();
 			}
 			} else {

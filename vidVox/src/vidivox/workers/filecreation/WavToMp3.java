@@ -16,7 +16,7 @@ public class WavToMp3 extends SwingWorker<Void, String>{
 	private String location;
 	private String text,offset;
 	private Boolean overlay;
-	private int textNumber;
+	private int textNumber, choice;
 
 	@Override
 	protected Void doInBackground() throws Exception {
@@ -43,23 +43,24 @@ public class WavToMp3 extends SwingWorker<Void, String>{
 		return null;
 	}
 
-	public WavToMp3 (String location, String text, Boolean overlay, int textNumber, String offset){
+	public WavToMp3 (String location, String text, Boolean overlay, int textNumber, String offset, int choice){
 		this.location = location;
 		this.text = text;
 		this.overlay = overlay;
 		this.textNumber = textNumber;
 		this.offset = offset;
+		this.choice = choice;
 	}
 
 	protected void done(){
 		//if this mp3 needs to be overlayed
 		if (overlay){
 			// do the overlay 
-			DurationGetter k = new DurationGetter(this.location, this.text, this.overlay, this.textNumber, this.offset);
+			DurationGetter k = new DurationGetter(this.location, this.text, this.overlay, this.textNumber, this.offset, this.choice);
 			k.execute();
 			
 		}else{
-			JOptionPane.showMessageDialog(null, "successfully saved mp3 file to: "+ location); 
+			JOptionPane.showMessageDialog(null, "Successfully saved mp3 file to: "+ location); 
 		}
 	}
 

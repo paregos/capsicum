@@ -24,15 +24,15 @@ import vidivox.workers.filecreation.TextToFile;
 
 
 public class TextToMp3Screen extends JFrame {
-	//
+	
 	private JPanel pane,timerPane ;
 	private JTextField textbox, textbox1, textbox2, textbox3;
 	private JComboBox voiceChooser;
 	private GridBagLayout gbl_timer;
-	public static int videoNumber =0;
+	private static int videoNumber =0;
 	private String offset;
 	public static String originalVideo;
-	public static MainPlayerScreen mainPlayerScreen;
+	private static MainPlayerScreen mainPlayerScreen;
 	private int textNumber =0;
 	
 
@@ -43,7 +43,7 @@ public class TextToMp3Screen extends JFrame {
 
 		//making the main initial layout for the textToMp3Screen
 		setBounds(300, 300, 650, 150);
-		setTitle("Enter text between 1-75 characters");
+		setTitle("Enter text between 1-150 characters");
 		GridBagConstraints c = new GridBagConstraints();		
 
 		//creating the content pane which will store all of the TextToMp3Screen components
@@ -126,7 +126,7 @@ public class TextToMp3Screen extends JFrame {
 		pane.add(insert, c);
 		
 		//creating a label which will tell the user to select a time to enter at.
-		JLabel voice = new JLabel("Select a voice ");
+		JLabel voice = new JLabel("Select a voice:");
 		c.gridx = 2;
 		c.gridy = 0;
 		c.weightx = 0;
@@ -189,8 +189,8 @@ public class TextToMp3Screen extends JFrame {
 		// added to the video
 		voiceChooser = new JComboBox();
 		voiceChooser.addItem("Default");
-		voiceChooser.addItem("Male");
-		voiceChooser.addItem("Female");
+		voiceChooser.addItem("Kiwi Male");
+		voiceChooser.addItem("European Male");
 		c = new GridBagConstraints();
 		c.gridx = 3;
 		c.gridy = 0;
@@ -205,14 +205,15 @@ public class TextToMp3Screen extends JFrame {
 		preview.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (textbox.getText().length() > 75 || textbox.getText().length() < 1){
-					JOptionPane.showMessageDialog(null, "Error please enter between 1-75 characters");
+				if (textbox.getText().length() > 150 || textbox.getText().length() < 1){
+					JOptionPane.showMessageDialog(null, "Error please enter between 1-150 characters");
 				}else if (textbox.getText().trim().equals("")){
 					JOptionPane.showMessageDialog(null, "Error please enter some characters, not only spaces");
-
 				}else{
-					PreviewTextSpeech k = new PreviewTextSpeech(textbox.getText());
+					String path = "/tmp/rop"+textNumber;
+					PreviewTextSpeech k = new PreviewTextSpeech(textbox.getText(),voiceChooser.getSelectedIndex(), path);
 					k.execute();
+					textNumber++;
 				}
 			}
 		});
@@ -220,8 +221,8 @@ public class TextToMp3Screen extends JFrame {
 		saveToMp3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if ((textbox.getText().length() > 75) || (textbox.getText().length() < 1)){
-					JOptionPane.showMessageDialog(null, "Error please enter between 1-75 characters");
+				if ((textbox.getText().length() > 150) || (textbox.getText().length() < 1)){
+					JOptionPane.showMessageDialog(null, "Error please enter between 1-150 characters");
 				}else if (textbox.getText().trim().equals("")){
 					JOptionPane.showMessageDialog(null, "Error please enter some characters, not only spaces");
 				}else{
@@ -239,8 +240,9 @@ public class TextToMp3Screen extends JFrame {
 						mediaPath=ourFile.getAbsolutePath();
 
 						//creates the mp3 file at the location
-						TextToFile k = new TextToFile(textbox.getText(), mediaPath, false, textNumber, "00:00:00");
+						TextToFile k = new TextToFile(textbox.getText(), mediaPath, false, textNumber, "00:00:00", 0);
 						k.execute();
+						TextToMp3Screen.this.setVisible(false);
 					}
 				}
 			}
@@ -249,11 +251,9 @@ public class TextToMp3Screen extends JFrame {
 		overlay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (textbox.getText().length() > 75 || textbox.getText().length() < 1){
-
-					JOptionPane.showMessageDialog(null, "Error please enter between 1-75 characters");
-
-				}else if (MainPlayerScreen.mediapath == null){
+				if (textbox.getText().length() > 150 || textbox.getText().length() < 1){
+					JOptionPane.showMessageDialog(null, "Error please enter between 1-150 characters");
+				}else if (MainPlayerScreen.getMediapath() == null){
 					JOptionPane.showMessageDialog(null, "Error open a video before adding commentary please");
 				}else if (textbox.getText().trim().equals("")){
 					JOptionPane.showMessageDialog(null, "Error please enter some characters, not only spaces");
@@ -262,11 +262,12 @@ public class TextToMp3Screen extends JFrame {
 					if(checkNumbersOnly(offset)){
 					//creates a mp3 file, places it in tmp and overlays the audio
 					String path = "/tmp/iop"+textNumber;
-					TextToFile k = new TextToFile(textbox.getText(), path, true, textNumber, offset);
+					TextToFile k = new TextToFile(textbox.getText(), path, true, textNumber, offset, voiceChooser.getSelectedIndex());
 					k.execute();
 					textNumber++;
+					TextToMp3Screen.this.setVisible(false);
 					}else{
-						JOptionPane.showMessageDialog(null, "Time must be in the format HH:MM:SS");
+						JOptionPane.showMessageDialog(null, "Time must be in the format HH:MM:SS, (Minutes and Seconds lower than 60)");
 					}
 				}
 			}
@@ -274,22 +275,34 @@ public class TextToMp3Screen extends JFrame {
 
 
 	}
-	
+	// this method checks if a string contains only numbers, it is used to check if the
+	// offset time a user has selected is valid. 
 	public boolean checkNumbersOnly(String time) {
-		
 		boolean valid = false;
 		String [] times = time.split(":");
-		for (int i = 0; i<times.length; i++){
+		
+		//checking if the minutes or seconds is above 60
+		if(times.length < 3){
+			return false;
+		}
+		
+		for (int i = 0; i<times.length; i++){		
 		valid= times[i].matches("[0-9]+");
-		if ((valid) && (times[i].length() == 2)) {
+		if ( ( (valid) && (times[i].length() == 2) ) ) {
 			valid = true;
 		} else {
 			return false;
 		}
-		
 		}
-		
+
 		return valid;
 	}
+
+	//getters and setters for fields of TextToMp3Screen
+	public static int getVideoNumber() {return videoNumber;}
+
+	public static void setVideoNumber(int videoNumber) {TextToMp3Screen.videoNumber = videoNumber;}
+	public static MainPlayerScreen getMainPlayerScreen() {return mainPlayerScreen;}
+
 
 }

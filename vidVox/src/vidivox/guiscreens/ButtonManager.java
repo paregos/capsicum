@@ -5,21 +5,15 @@ import vidivox.guiscreens.panes.ControlsPane;
 
 public class ButtonManager {
 
-	
-		public ButtonManager() {
-			
-		}
-	
-	
 	//enables all buttons that were previously not able to be pressed
 		public void enableButtons(){
 			
 			//turning on the commentary pane buttons
-			CommentaryPane.createCommentary1.setEnabled(true);
-			CommentaryPane.mergeCommentary.setEnabled(true);
-			CommentaryPane.removeCommentary.setEnabled(true);
-			CommentaryPane.addCommentary1.setEnabled(true);
-			CommentaryPane.fxMenu.setEnabled(true);
+			CommentaryPane.getCreateCommentary1().setEnabled(true);
+			CommentaryPane.getMergeCommentary().setEnabled(true);
+			CommentaryPane.getRemoveCommentary().setEnabled(true);
+			CommentaryPane.getAddCommentary1().setEnabled(true);
+			CommentaryPane.getFxMenu().setEnabled(true);
 			
 			//turning on the video control buttons
 			ControlsPane.fastforward.setEnabled(true);
@@ -28,5 +22,4 @@ public class ButtonManager {
 			ControlsPane.mute.setEnabled(true);
 			
 		}
-	
 }

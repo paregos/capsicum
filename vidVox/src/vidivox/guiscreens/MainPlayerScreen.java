@@ -30,6 +30,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -52,32 +53,27 @@ import vidivox.workers.Skip;
 
 public class MainPlayerScreen extends JFrame {
 	// Fields which are used within this class and package.
-	public static JPanel topPane, bottomPane,leftPane, effectsPane, rightPane;
+	private static JPanel topPane, bottomPane,leftPane, effectsPane, rightPane;
 	public static EmbeddedMediaPlayerComponent mediaPlayerComponent;
-	public static Skip ffswing, rwswing;
-	public static String mediapath;
-	public static LoadingScreen loadingScreen = new LoadingScreen();
+	private static Skip ffswing, rwswing;
+	private static String mediapath;
+	private PositionSlider slider;
+	private static LoadingScreen loadingScreen = new LoadingScreen();
 	private boolean pressedWhilePlaying = false;
-	public static TextToMp3Screen createCommentaryScreen;
-	public static int currentVolume;
-	public static boolean ff = false, rw = false, refresh = false;
-	public long totaltime;
-	private ChangeListener listener;
+	private static TextToMp3Screen createCommentaryScreen;
+	private static int currentVolume;
+	private static boolean ff = false, rw = false;
 	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
 	// Set up the GridBag Layout for my screen.
-	GridBagLayout gbl_topPane, gbl_effects, gbl_leftPane, gbl_bottomPane, gbl_rightPane;
-	GridBagConstraints c;
+	private GridBagLayout gbl_topPane, gbl_effects, gbl_leftPane, gbl_bottomPane, gbl_rightPane;
+	private GridBagConstraints c;
 
 	// Buttons, sliders and labels which are used in my GUI for users to click.
-	public JSlider positionSlider;
-	public static JLabel endLabel;
-	public static JLabel timeLabel = new JLabel("00:00:00");
+	private static JLabel endLabel, timeLabel = new JLabel("00:00:00");
 	
 	// Menu at the top which allows users to select their appropriate options.
-	JMenuBar menuBar;
-	JMenu video, audio;
-	JMenuItem openVideo, saveVideo, saveVideoAs, addCommentary,createCommentary;
+	private JMenuBar menuBar;
 
 	/*
 	 *  The following methods used a number of segments of code from the following for additional features.
@@ -91,14 +87,14 @@ public class MainPlayerScreen extends JFrame {
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				if (!(mediapath == TextToMp3Screen.originalVideo)) {
+				if (!(getMediapath() == TextToMp3Screen.originalVideo)) {
 					Object[] options = { "Save", "Save as..","Exit without saving" };
 					int choice = JOptionPane.showOptionDialog(null,"Save changes to your video before closing?","Warning video has changes which are not saved",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE, null, options,options[0]);
 					if (choice == 0) {
-						if (MainPlayerScreen.mediapath == null) {
+						if (MainPlayerScreen.getMediapath() == null) {
 							JOptionPane.showMessageDialog(null,"error please open a video before trying to save");
 						} else {
-							MoveVideoFile k = new MoveVideoFile(mediapath,TextToMp3Screen.originalVideo);
+							MoveVideoFile k = new MoveVideoFile(getMediapath(),TextToMp3Screen.originalVideo);
 							k.execute();
 						}
 					} else if (choice == 1) {
@@ -113,18 +109,19 @@ public class MainPlayerScreen extends JFrame {
 
 		// making the main initial layout
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 820, 490);
+		setBounds(100, 100, 1370, 610);
 		c = new GridBagConstraints();
 		// Runs the methods in this class which establish the buttons and their
 		// appropriate action.
 		setUpLayout();
 		setUpListeners();
+		
 	}
 
 	// This will run the video from the media path provided.
 	public void run() {
 		// This will run the video.
-		mediaPlayerComponent.getMediaPlayer().playMedia(mediapath);
+		mediaPlayerComponent.getMediaPlayer().playMedia(getMediapath());
 		// This will get the current time of the video.
 		final long time = mediaPlayerComponent.getMediaPlayer().getTime();
 		// This will get the position of the video.
@@ -133,6 +130,8 @@ public class MainPlayerScreen extends JFrame {
 		// This will get the total length of the video.
 		final long duration = mediaPlayerComponent.getMediaPlayer().getLength();
 
+		System.out.println("hello");
+		
 		// This will be used to update the GUI.
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -155,7 +154,7 @@ public class MainPlayerScreen extends JFrame {
 				"%02d:%02d:%02d",
 				TimeUnit.MILLISECONDS.toHours(millis),
 				TimeUnit.MILLISECONDS.toMinutes(millis)
-						- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS
+					- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS
 								.toHours(millis)),
 				TimeUnit.MILLISECONDS.toSeconds(millis)
 						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS
@@ -163,26 +162,10 @@ public class MainPlayerScreen extends JFrame {
 		endLabel.setText(s);
 	}
 
-	// This class will set the video based on the position of the slider.
-	void setSliderBasedPosition() {
-		// Check if it is playable.
-		if (!mediaPlayerComponent.getMediaPlayer().isSeekable()) {
-			return;
-		}
-
-		float positionValue = positionSlider.getValue() / 1000.0f;
-		// Makes sure it wont freeze.
-		if (positionValue > 0.99f) {
-			positionValue = 0.99f;
-		}
-		// Set position of position slider.
-		mediaPlayerComponent.getMediaPlayer().setPosition(positionValue);
-	}
-
 	// Update the UI as it plays.
 	public void updateGUI() {
 		if (!mediaPlayerComponent.getMediaPlayer().isPlaying()) {
-			if (!pressedWhilePlaying) {
+			if (!isPressedWhilePlaying()) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -195,8 +178,7 @@ public class MainPlayerScreen extends JFrame {
 		}
 		// Gets the current time and position and updates them in the GUI.
 		long time = mediaPlayerComponent.getMediaPlayer().getTime();
-		int position = (int) (mediaPlayerComponent.getMediaPlayer()
-				.getPosition() * 1000.0f);
+		int position = (int) (mediaPlayerComponent.getMediaPlayer().getPosition() * 1000.0f);
 		updateTime(time);
 		updatePosition(position);
 	}
@@ -212,13 +194,13 @@ public class MainPlayerScreen extends JFrame {
 				TimeUnit.MILLISECONDS.toSeconds(millis)
 						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS
 								.toMinutes(millis)));
-		timeLabel.setText(s);
-		CommentaryPane.addCommentary1.setText("Select Mp3 Commentary to add at " + s);
+		getTimeLabel().setText(s);
+		CommentaryPane.getAddCommentary1().setText("Select Mp3 Commentary to add at " + s);
 	}
 
 	// Updates the position of the position slider based on value given.
 	private void updatePosition(int value) {
-		positionSlider.setValue(value);
+		slider.getPositionSlider().setValue(value);
 	}
 
 	// Class which is used to update the GUI.
@@ -254,8 +236,7 @@ public class MainPlayerScreen extends JFrame {
 	}
 
 	private void setUpLayout() {
-		// creating the content pane which will store all of the video
-		// components
+		// creating the content pane which will store all of the videocomponents
 		gbl_topPane = new GridBagLayout();
 		topPane = new JPanel(gbl_topPane);
 		// contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -309,10 +290,9 @@ public class MainPlayerScreen extends JFrame {
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
-		c.weightx = 1;
+		c.weightx = 10;
 		c.weighty = 99;
 		c.gridwidth = 4;
-		c.anchor = GridBagConstraints.WEST;
 		c.fill = GridBagConstraints.BOTH;
 		topPane.add(leftPane, c);
 
@@ -324,7 +304,7 @@ public class MainPlayerScreen extends JFrame {
 		c.weighty = 0;
 		c.anchor = GridBagConstraints.WEST;
 		c.insets = new Insets(0, 10, 10, 10);
-		topPane.add(timeLabel, c);
+		topPane.add(getTimeLabel(), c);
 
 		// Adding a Jlabel which will be the ending time of the video
 		endLabel = new JLabel("00:00:00");
@@ -337,22 +317,8 @@ public class MainPlayerScreen extends JFrame {
 		c.insets = new Insets(0, 10, 10, 10);
 		topPane.add(endLabel, c);
 
-		// Adding the position Slider which will change as the video progresses
-		positionSlider = new JSlider();
-		positionSlider.setMinimum(0);
-		positionSlider.setMaximum(1000);
-		positionSlider.setValue(0);
-		// positionSlider.setToolTipText("Position");
-		c = new GridBagConstraints();
-		c.gridx = 1;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		c.weightx = 1;
-		c.weighty = 0;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0, 10, 10, 10);
-		c.fill = GridBagConstraints.HORIZONTAL;
-		topPane.add(positionSlider, c);
+		// Adding the position Slider which will change as the video progresses	
+		slider = new PositionSlider(topPane, this);		
 
 		// Creates a Menu bar for the frame
 		menuBar = new JMenuBar();
@@ -364,9 +330,9 @@ public class MainPlayerScreen extends JFrame {
 
 		// Adding in the video area where a mp4 can be played
 		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-		//mediaPlayerComponent.setPreferredSize(new Dimension(1300, 480));
-		ff = false;
-		rw = false;
+		mediaPlayerComponent.setPreferredSize(new Dimension(600, 480));
+		setFf(false);
+		setRw(false);
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
@@ -381,50 +347,6 @@ public class MainPlayerScreen extends JFrame {
 
 	public void setUpListeners() {
 
-		// This is a change listener used to look at the changes when the video
-		// is being played and mainly used to
-		// update the the time of the video when the position slider is being
-		// dragged.
-		listener = new ChangeListener() {
-			public void stateChanged(ChangeEvent event) {
-				if (refresh) {
-					setSliderBasedPosition();
-					updateGUI();
-				}
-			}
-		};
-		positionSlider.addChangeListener(listener);
-		positionSlider.addMouseListener(new MouseAdapter() {
-			// Checks for when the mouse is being pressed and updates the
-			// position and time appropriately.
-			@Override
-			public void mousePressed(MouseEvent e) {
-				refresh = true;
-				if (mediaPlayerComponent.getMediaPlayer().isPlaying()) {
-					pressedWhilePlaying = true;
-				} else {
-					pressedWhilePlaying = false;
-				}
-				// This will allow you to go to a certain point in the video by
-				// clicking on the position slider and then updates
-				// the video based on where you clicked.
-				JSlider sourceSlider = (JSlider) e.getSource();
-				BasicSliderUI ui = (BasicSliderUI) sourceSlider.getUI();
-				int value = ui.valueForXPosition(e.getX());
-				positionSlider.setValue(value);
-				setSliderBasedPosition();
-			}
-
-			// Checks for when the mouse has been released and gets the point
-			// where it has been released.
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// Updates the slider and the time.
-				refresh = false;
-				setSliderBasedPosition();
-				updateGUI();
-			}
-		});
 		// Checks for when the video is finished and if it is, it will stop the
 		// video and user will need to play video again.
 		mediaPlayerComponent.getMediaPlayer().addMediaPlayerEventListener(
@@ -432,8 +354,49 @@ public class MainPlayerScreen extends JFrame {
 					@Override
 					public void finished(MediaPlayer mediaPlayer) {
 						mediaPlayerComponent.getMediaPlayer().stop();
-						ControlsPane.play.setText("play");
+						ControlsPane.play.setText("Play");
 					}
 				});
 	}
+
+	public static JPanel getEffectsPane() {return effectsPane;}
+
+	public static Skip getFfswing() {return ffswing;}
+
+	public static void setFfswing(Skip ffswing) {MainPlayerScreen.ffswing = ffswing;}
+
+	public static Skip getRwswing() {return rwswing;}
+
+	public static void setRwswing(Skip rwswing) {MainPlayerScreen.rwswing = rwswing;}
+
+	public static String getMediapath() {return mediapath;}
+
+	public static void setMediapath(String mediapath) {MainPlayerScreen.mediapath = mediapath;}
+
+	public static LoadingScreen getLoadingScreen() {return loadingScreen;}
+
+	public static TextToMp3Screen getCreateCommentaryScreen() {return createCommentaryScreen;}
+
+	public static void setCreateCommentaryScreen(TextToMp3Screen createCommentaryScreen) {MainPlayerScreen.createCommentaryScreen = createCommentaryScreen;}
+
+	public static int getCurrentVolume() {return currentVolume;}
+
+	public static void setCurrentVolume(int currentVolume) {MainPlayerScreen.currentVolume = currentVolume;}
+
+	public static boolean isRw() {return rw;}
+
+	public static void setRw(boolean rw) {MainPlayerScreen.rw = rw;}
+
+	public static boolean isFf() {return ff;}
+
+	public static void setFf(boolean ff) {MainPlayerScreen.ff = ff;}
+
+	public static JLabel getTimeLabel() {return timeLabel;}
+
+	public boolean isPressedWhilePlaying() {return pressedWhilePlaying;}
+
+	public void setPressedWhilePlaying(boolean pressedWhilePlaying) {this.pressedWhilePlaying = pressedWhilePlaying;}
+
+	public PositionSlider getSlider() {return slider;}
+	
 }

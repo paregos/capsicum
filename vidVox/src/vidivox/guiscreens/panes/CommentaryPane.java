@@ -1,5 +1,6 @@
 package vidivox.guiscreens.panes;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -28,10 +29,10 @@ import vidivox.workers.OverlayMp3OntoVideo;
 
 public class CommentaryPane extends JPanel {
 
-	public static JButton createCommentary1, removeCommentary, mergeCommentary, addCommentary1, fxMenu;
+	private static JButton createCommentary1, removeCommentary, mergeCommentary, addCommentary1, fxMenu;
 	private GridBagConstraints c;
-	public static DefaultTableModel audioOverlayTable = null;
-	public JTable table2;
+	private static DefaultTableModel audioOverlayTable = null;
+	private JTable table2;
 	private JSeparator separator;
 	
 	public CommentaryPane(){
@@ -45,7 +46,8 @@ public class CommentaryPane extends JPanel {
 		this.setLayout(new GridBagLayout());
 		
 		// JButton which Creates Commentary
-		createCommentary1 = new JButton("Create Commentary");
+		createCommentary1 = (new JButton("Create Commentary"));
+		getCreateCommentary1().setForeground(Color.blue);
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
@@ -55,11 +57,12 @@ public class CommentaryPane extends JPanel {
 		c.insets = new Insets(10, 10, 0, 10);
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		this.add(createCommentary1, c);
-		createCommentary1.setEnabled(false);
+		this.add(getCreateCommentary1(), c);
+		getCreateCommentary1().setEnabled(false);
 
 		// JButton which add selected Commentary to the video
-		mergeCommentary = new JButton("Merge selected commentary to video");
+		mergeCommentary = (new JButton("Merge selected commentary to video"));
+		getMergeCommentary().setForeground(Color.blue);
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 5;
@@ -69,11 +72,12 @@ public class CommentaryPane extends JPanel {
 		c.insets = new Insets(0, 10, 5, 10);
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		this.add(mergeCommentary, c);
-		mergeCommentary.setEnabled(false);
+		this.add(getMergeCommentary(), c);
+		getMergeCommentary().setEnabled(false);
 		
 		// JButton which add selected Commentary to the video
-		removeCommentary = new JButton("Remove selected commentary from list");
+		removeCommentary = (new JButton("Remove selected commentary from list"));
+		getRemoveCommentary().setForeground(Color.blue);
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 4;
@@ -83,11 +87,12 @@ public class CommentaryPane extends JPanel {
 		c.insets = new Insets(0, 10, 5, 10);
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		this.add(removeCommentary, c);
-		removeCommentary.setEnabled(false);
+		this.add(getRemoveCommentary(), c);
+		getRemoveCommentary().setEnabled(false);
 		
 		// JButton which adds Commentary to the list
-		addCommentary1 = new JButton("Select Mp3 Commentary to add at "+ MainPlayerScreen.timeLabel.getText());
+		addCommentary1 = (new JButton("Select Mp3 Commentary to add at "+ MainPlayerScreen.getTimeLabel().getText()));
+		getAddCommentary1().setForeground(Color.blue);
 		c = new GridBagConstraints();
 		c.gridx = 1;
 		c.gridy = 4;
@@ -97,11 +102,11 @@ public class CommentaryPane extends JPanel {
 		c.insets = new Insets(0, 10, 5, 10);
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		this.add(addCommentary1, c);
-		addCommentary1.setEnabled(false);
+		this.add(getAddCommentary1(), c);
+		getAddCommentary1().setEnabled(false);
 		
 		// JButton which opens the special fx menu
-		fxMenu = new JButton("Open special video effects tab");
+		fxMenu = (new JButton("Open special video effects tab"));
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 7;
@@ -111,8 +116,8 @@ public class CommentaryPane extends JPanel {
 		c.insets = new Insets(0, 10, 5, 10);
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		this.add(fxMenu, c);
-		fxMenu.setEnabled(false);
+		this.add(getFxMenu(), c);
+		getFxMenu().setEnabled(false);
 		
 		// JSeperator which adds Commentary to the list
 		separator = new JSeparator();
@@ -130,7 +135,7 @@ public class CommentaryPane extends JPanel {
 		// Creating a table which will hold all of the information relating to
 		// commentaries being added
 		String[] audioOverlayOptions = { "Full name", "Commentary",
-				"Duration", "Time inserted", "Include?" };
+				"Duration", "Time inserted", "Include?", "Voice Type" };
 		audioOverlayTable = new DefaultTableModel(audioOverlayOptions, 0) {
 			// Code from
 			// http://stackoverflow.com/questions/18099717/how-to-add-jcheckbox-in-jtable
@@ -153,10 +158,13 @@ public class CommentaryPane extends JPanel {
 				case 4:
 					columnType = Boolean.class;
 					break;
+				case 5:
+					columnType = String.class;
+					break;
 				}
 				return columnType;
 			}
-			
+			// removing edit functionality from all of the columns within my commentary table
 			public boolean isCellEditable(int row, int column) {
 				switch (column){
 				case 4:
@@ -167,15 +175,14 @@ public class CommentaryPane extends JPanel {
 			
 		};
 		
-		
-		table2 = new JTable(audioOverlayTable);
-		table2.setModel(audioOverlayTable);
+		//removing a column fromn my table which will store data
+		table2 = new JTable(getAudioOverlayTable());
+		table2.setModel(getAudioOverlayTable());
 		table2.removeColumn(table2.getColumnModel().getColumn(0));
 
+		//creating a scroll pane which will wrap around my commentary table 
 		JScrollPane scrollPane = new JScrollPane();
-		// scrollPane.setBounds(20, 75, 400, 400);
 		scrollPane.setViewportView(table2);
-		// scrollPane.setMinimumSize( scrollPane.getPreferredSize() );
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 1;
@@ -191,30 +198,29 @@ public class CommentaryPane extends JPanel {
 	public void setUpListeners() {
 		
 		// Action listener for fxMenu button, it will open or close the menu
-		fxMenu.addActionListener(new ActionListener() {
+		getFxMenu().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				if (MainPlayerScreen.effectsPane.isVisible()){
-					MainPlayerScreen.effectsPane.setVisible(false);
-					fxMenu.setText("Open special video effects tab");
+				if (MainPlayerScreen.getEffectsPane().isVisible()){
+					MainPlayerScreen.getEffectsPane().setVisible(false);
+					getFxMenu().setText("Open special video effects tab");
 				}else{
-					MainPlayerScreen.effectsPane.setVisible(true);
-					fxMenu.setText("Close special video effects tab");
+					MainPlayerScreen.getEffectsPane().setVisible(true);
+					getFxMenu().setText("Close special video effects tab");
 				}
-				
 				repaint();
 			}
 		});
 		
 		// Action listener for the gamma slider of the video
-		removeCommentary.addActionListener(new ActionListener() {
+		getRemoveCommentary().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 		
 			int rowsSeclected = table2.getSelectedRows().length;
 			for (int i = 0; i < rowsSeclected; i++){
-				audioOverlayTable.removeRow(table2.getSelectedRow());
+				getAudioOverlayTable().removeRow(table2.getSelectedRow());
 			}
 			
 			}
@@ -222,7 +228,7 @@ public class CommentaryPane extends JPanel {
 		
 		// Opens a file chooser and lets the user select a commentary to add to
 		// the table
-		addCommentary1.addActionListener(new ActionListener() {
+		getAddCommentary1().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser ourFileSelector = new JFileChooser();
@@ -240,13 +246,13 @@ public class CommentaryPane extends JPanel {
 					ourFile = ourFileSelector.getSelectedFile();
 					mediaPath = ourFile.getAbsolutePath();
 					
-					DurationGetter k = new DurationGetter(mediaPath, ourFile.getName(), true, 50, 	MainPlayerScreen.timeLabel.getText());
+					DurationGetter k = new DurationGetter(mediaPath, ourFile.getName(), true, 50, MainPlayerScreen.getTimeLabel().getText(), 10);
 					k.execute();
 				}
 			}
 		});
 		// Merges all selected commentary on to the current video
-		mergeCommentary.addActionListener(new ActionListener() {
+		getMergeCommentary().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -279,13 +285,28 @@ public class CommentaryPane extends JPanel {
 		});
 		
 		// Allows the user to create commentary.
-		createCommentary1.addActionListener(new ActionListener() {
+		getCreateCommentary1().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				MainPlayerScreen.createCommentaryScreen.setVisible(true);
+				MainPlayerScreen.getCreateCommentaryScreen().setVisible(true);
 			}
 		});
 	}
+
+//getters for fields of Commentary panel
+	public static DefaultTableModel getAudioOverlayTable() {return audioOverlayTable;}
+
+	public static JButton getAddCommentary1() {return addCommentary1;}
+
+	public static JButton getCreateCommentary1() {return createCommentary1;}
+
+	public static JButton getMergeCommentary() {return mergeCommentary;}
+
+	public static JButton getRemoveCommentary() {return removeCommentary;}
+
+	public static JButton getFxMenu() {return fxMenu;}
+
+
 	
 }

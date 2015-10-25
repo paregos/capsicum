@@ -12,7 +12,6 @@ import javax.swing.JSlider;
 
 
 public class LoadingScreen extends JFrame{
-	//
 	private JPanel pane;
 
 	public LoadingScreen(){

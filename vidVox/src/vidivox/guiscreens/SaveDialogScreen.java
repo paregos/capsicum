@@ -4,8 +4,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 public class SaveDialogScreen {
-	//
-	//a file chooser that will ask the user before it overwrites the file
+	
+	// this class consists of a file chooser that will ask the user before it overwrites the file
 	public static JFileChooser ourFileSelector= new JFileChooser(){
 		public void approveSelection() {
 			//if the file selected exists already

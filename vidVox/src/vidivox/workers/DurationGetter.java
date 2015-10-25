@@ -14,14 +14,15 @@ public class DurationGetter extends SwingWorker<Void, String>{
 	private String location, duration;
 	private String text,offset;
 	private Boolean overlay;
-	private int textNumber;
+	private int textNumber, choice;
 	
-	public DurationGetter(String location, String text, Boolean overlay, int textNumber, String offset){
+	public DurationGetter(String location, String text, Boolean overlay, int textNumber, String offset, int choice){
 		this.location = location;
 		this.text = text;
 		this.overlay = overlay;
 		this.textNumber = textNumber;
 		this.offset = offset;
+		this.choice = choice;
 	}
 	
 	@Override
@@ -52,9 +53,20 @@ public class DurationGetter extends SwingWorker<Void, String>{
 	}
 	
 	protected void done(){
-	
-		Object[] data = { location, text, duration, offset, true };
-		CommentaryPane.audioOverlayTable.addRow(data);
+		
+		String voice;
+		if (choice == 0){
+			voice = "Default";
+		} else if (choice == 1){
+			voice = "Kiwi Male";
+		} else if (choice == 2){
+			voice = "European Male";
+		} else {
+			voice = "Mp3";
+		}
+		
+		Object[] data = { location, text, duration, offset, true, voice };
+		CommentaryPane.getAudioOverlayTable().addRow(data);
 	
 		
 	}

@@ -22,7 +22,7 @@ import vidivox.workers.Skip;
 public class ControlsPane extends JPanel{
 	
 	public static JButton fastforward, rewind, play, mute;
-	GridBagConstraints c;
+	private GridBagConstraints c;
 	private JLabel volumeLabel;
 	private JSlider volume;
 	private MainPlayerScreen mainplayer;
@@ -44,7 +44,6 @@ public class ControlsPane extends JPanel{
 				c.weightx = 0;
 				c.weighty = 1;
 				c.insets = new Insets(0, 5, 0, 10);
-				// c.anchor = GridBagConstraints.EAST;
 				this.add(fastforward, c);
 				fastforward.setEnabled(false);
 
@@ -56,12 +55,11 @@ public class ControlsPane extends JPanel{
 				c.weightx = 0;
 				c.weighty = 1;
 				c.insets = new Insets(0, 10, 0, 5);
-				// c.anchor = GridBagConstraints.WEST;
 				this.add(rewind, c);
 				rewind.setEnabled(false);
 
 				// JButton which Plays the video
-				play = new JButton("pause");
+				play = new JButton("Pause");
 				c = new GridBagConstraints();
 				c.gridx = 2;
 				c.gridy = 0;
@@ -115,24 +113,24 @@ public class ControlsPane extends JPanel{
 						// Check if fast forwarding or rewind is on when the play/pause
 						// button is clicked
 						// and will cancel it.
-						if (MainPlayerScreen.ff == true) {
-							MainPlayerScreen.ffswing.cancel(true);
-							MainPlayerScreen.ff = false;
+						if (MainPlayerScreen.isFf() == true) {
+							MainPlayerScreen.getFfswing().cancel(true);
+							MainPlayerScreen.setFf(false);
 						}
-						if (MainPlayerScreen.rw == true) {
-							MainPlayerScreen.rwswing.cancel(true);
-							MainPlayerScreen.rw = false;
+						if (MainPlayerScreen.isRw() == true) {
+							MainPlayerScreen.getRwswing().cancel(true);
+							MainPlayerScreen.setRw(false);
 						}
 						// Pauses or plays the video depending if it is playing or
 						// paused respectively and also
 						// changes the text of the button to add a more user friendly
 						// experience.
-						if (play.getText().equals("play")) {
-							play.setText("pause");
+						if (play.getText().equals("Play")) {
+							play.setText("Pause");
 							MainPlayerScreen.mediaPlayerComponent.getMediaPlayer().play();
 
 						} else {
-							play.setText("play");
+							play.setText("Play");
 							MainPlayerScreen.mediaPlayerComponent.getMediaPlayer().setPause(true);
 						}
 					}
@@ -144,30 +142,30 @@ public class ControlsPane extends JPanel{
 						// Press rewind button while fastforwarding and not rewinding
 						// will result in fast
 						// forward being canceled and rewind being used.
-						if ((MainPlayerScreen.ff == true) && (MainPlayerScreen.rw == false)) {
-							MainPlayerScreen.rwswing = new Skip(MainPlayerScreen.mediaPlayerComponent, -1000, mainplayer);
-							MainPlayerScreen.ffswing.cancel(true);
-							MainPlayerScreen.rwswing.skip = true;
-							MainPlayerScreen.rwswing.execute();
-							MainPlayerScreen.rw = true;
-							MainPlayerScreen.ff = false;
+						if ((MainPlayerScreen.isFf() == true) && (MainPlayerScreen.isRw() == false)) {
+							MainPlayerScreen.setRwswing(new Skip(MainPlayerScreen.mediaPlayerComponent, -1000, mainplayer));
+							MainPlayerScreen.getFfswing().cancel(true);
+							MainPlayerScreen.getRwswing().skip = true;
+							MainPlayerScreen.getRwswing().execute();
+							MainPlayerScreen.setRw(true);
+							MainPlayerScreen.setFf(false);
 							// Press rewind button while not rewinding or fastforwarding
 							// will result in rewind
 							// just being executed.
-						} else if ((MainPlayerScreen.rw == false) && (MainPlayerScreen.ff == false)) {
-							MainPlayerScreen.rwswing = new Skip(MainPlayerScreen.mediaPlayerComponent, -1000, mainplayer);
-							MainPlayerScreen.rwswing.skip = true;
-							MainPlayerScreen.rwswing.execute();
-							MainPlayerScreen.rw = true;
+						} else if ((MainPlayerScreen.isRw() == false) && (MainPlayerScreen.isFf() == false)) {
+							MainPlayerScreen.setRwswing(new Skip(MainPlayerScreen.mediaPlayerComponent, -1000, mainplayer));
+							MainPlayerScreen.getRwswing().skip = true;
+							MainPlayerScreen.getRwswing().execute();
+							MainPlayerScreen.setRw(true);
 							// Press rewind button while rewinding and not fast
 							// forwarding will cause rewind
 							// to be canceled.
-						} else if ((MainPlayerScreen.rw == true) && (MainPlayerScreen.ff == false)) {
-							MainPlayerScreen.rwswing.cancel(true);
-							MainPlayerScreen.rw = false;
+						} else if ((MainPlayerScreen.isRw() == true) && (MainPlayerScreen.isFf() == false)) {
+							MainPlayerScreen.getRwswing().cancel(true);
+							MainPlayerScreen.setRw(false);
 							// Will pause the component if rewind is canceled and it was
 							// paused when rewinding.
-							if (play.getText().equals("play")) {
+							if (play.getText().equals("Play")) {
 								MainPlayerScreen.mediaPlayerComponent.getMediaPlayer().setPause(true);
 							}
 							// Last case where you press the rewind button whilst its
@@ -175,12 +173,12 @@ public class ControlsPane extends JPanel{
 							// which cant occur but act as a backup code in base of
 							// bugs.
 						} else {
-							MainPlayerScreen.rwswing.cancel(true);
-							MainPlayerScreen.rw = false;
-							MainPlayerScreen.ffswing.cancel(true);
-							MainPlayerScreen.ff = false;
+							MainPlayerScreen.getRwswing().cancel(true);
+							MainPlayerScreen.setRw(false);
+							MainPlayerScreen.getFfswing().cancel(true);
+							MainPlayerScreen.setFf(false);
 							// Sets the play button to an appropriate button.
-							if (play.getText().equals("play")) {
+							if (play.getText().equals("Play")) {
 								MainPlayerScreen.mediaPlayerComponent.getMediaPlayer().setPause(true);
 							}
 						}
@@ -195,29 +193,29 @@ public class ControlsPane extends JPanel{
 						// fastforward is off and rewind
 						// is on. It will cause the rewind function to cancel and
 						// execute the fastforward.
-						if ((MainPlayerScreen.ff == false) && (MainPlayerScreen.rw == true)) {
-							MainPlayerScreen.ffswing = new Skip(MainPlayerScreen.mediaPlayerComponent, 1000, mainplayer);
-							MainPlayerScreen.rwswing.cancel(true);
-							MainPlayerScreen.ffswing.skip = true;
-							MainPlayerScreen.ffswing.execute();
-							MainPlayerScreen.ff = true;
-							MainPlayerScreen.rw = false;
+						if ((MainPlayerScreen.isFf() == false) && (MainPlayerScreen.isRw() == true)) {
+							MainPlayerScreen.setFfswing(new Skip(MainPlayerScreen.mediaPlayerComponent, 1000, mainplayer));
+							MainPlayerScreen.getRwswing().cancel(true);
+							MainPlayerScreen.getFfswing().skip = true;
+							MainPlayerScreen.getFfswing().execute();
+							MainPlayerScreen.setFf(true);
+							MainPlayerScreen.setRw(false);
 							// Checks whether fastforward button is clicked when
 							// fastforward is off and rewind
 							// is off. It will cause fastforward to execute.
-						} else if ((MainPlayerScreen.ff == false) && (MainPlayerScreen.rw == false)) {
-							MainPlayerScreen.ffswing = new Skip(MainPlayerScreen.mediaPlayerComponent, 1000, mainplayer);
-							MainPlayerScreen.ffswing.skip = true;
-							MainPlayerScreen.ffswing.execute();
-							MainPlayerScreen.ff = true;
+						} else if ((MainPlayerScreen.isFf() == false) && (MainPlayerScreen.isRw() == false)) {
+							MainPlayerScreen.setFfswing(new Skip(MainPlayerScreen.mediaPlayerComponent, 1000, mainplayer));
+							MainPlayerScreen.getFfswing().skip = true;
+							MainPlayerScreen.getFfswing().execute();
+							MainPlayerScreen.setFf(true);
 							// Checks whether fastforward button is clicked when
 							// fastforward is on and rewind
 							// is off. It will cause fastforward to stop.
-						} else if ((MainPlayerScreen.ff == true) && (MainPlayerScreen.rw == false)) {
+						} else if ((MainPlayerScreen.isFf() == true) && (MainPlayerScreen.isRw() == false)) {
 							// ffswing.skip=false;
-							MainPlayerScreen.ffswing.cancel(true);
-							MainPlayerScreen.ff = false;
-							if (play.getText().equals("play")) {
+							MainPlayerScreen.getFfswing().cancel(true);
+							MainPlayerScreen.setFf(false);
+							if (play.getText().equals("Play")) {
 								MainPlayerScreen.mediaPlayerComponent.getMediaPlayer().setPause(true);
 							}
 							// Last case where you press the fastforward button whilst
@@ -225,11 +223,11 @@ public class ControlsPane extends JPanel{
 							// which cant occur but act as a backup code in base of
 							// bugs.
 						} else {
-							MainPlayerScreen.rwswing.cancel(true);
-							MainPlayerScreen.rw = false;
-							MainPlayerScreen.ffswing.cancel(true);
-							MainPlayerScreen.ff = false;
-							if (play.getText().equals("play")) {
+							MainPlayerScreen.getRwswing().cancel(true);
+							MainPlayerScreen.setRw(false);
+							MainPlayerScreen.getFfswing().cancel(true);
+							MainPlayerScreen.setFf(false);
+							if (play.getText().equals("Play")) {
 								MainPlayerScreen.mediaPlayerComponent.getMediaPlayer().setPause(true);
 							}
 						}
@@ -241,9 +239,13 @@ public class ControlsPane extends JPanel{
 				volume.addChangeListener(new ChangeListener() {
 					@Override
 					public void stateChanged(ChangeEvent e) {
+						if(!(mute.getText() == "Mute") && (MainPlayerScreen.mediaPlayerComponent.getMediaPlayer().getVolume() > 0)){
+						mute.setText("Mute");
+						}
 						JSlider source = (JSlider) e.getSource();
 						MainPlayerScreen.mediaPlayerComponent.getMediaPlayer().setVolume(
 								source.getValue());
+						
 					}
 				});
 				// This will allow you to click anywhere on the volume slider and this
@@ -263,7 +265,7 @@ public class ControlsPane extends JPanel{
 					public void actionPerformed(ActionEvent e) {
 						// Checks if volume is not already muted and if not, mute it.
 						if (volume.getValue() != 0) {
-							MainPlayerScreen.currentVolume = volume.getValue();
+							MainPlayerScreen.setCurrentVolume(volume.getValue());
 							volume.setValue(0);
 							mute.setText("Unmute");
 							// mediaPlayerComponent.getMediaPlayer().mute();
@@ -271,7 +273,7 @@ public class ControlsPane extends JPanel{
 							// back to the previous value it was just before being
 							// muted.
 						} else {
-							volume.setValue(MainPlayerScreen.currentVolume);
+							volume.setValue(MainPlayerScreen.getCurrentVolume());
 							mute.setText("Mute");
 						}
 					}
